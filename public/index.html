@@ -12,7 +12,7 @@
         <p class="eyebrow">Eco Boats · Canal Motorboats</p>
         <h1>University reply check</h1>
         <p class="lede" id="lede">
-          Load every tab’s Emailcontact column, match it to Gmail, and download an Excel file with Gereageerd? filled in.
+          See who we contacted, who wrote back, and how many emails each side sent.
         </p>
       </div>
     </header>
@@ -28,33 +28,57 @@
       <p class="error" id="error" hidden></p>
     </section>
 
-    <section class="stats" id="stats" hidden>
-      <article><strong id="count-total">0</strong><span>Contacts</span></article>
-      <article><strong id="count-replied">0</strong><span>Gereageerd</span></article>
-      <article><strong id="count-none">0</strong><span>No reply</span></article>
-      <article><strong id="count-other">0</strong><span>Auto-reply or bounce</span></article>
+    <section class="phases" id="phases" hidden>
+      <button type="button" class="phase is-active" data-phase="all">
+        <strong id="phase-all">0</strong>
+        <span>All contacts</span>
+        <small>Every university on the sheet</small>
+      </button>
+      <button type="button" class="phase phase-contacted-none" data-phase="contacted-none">
+        <strong id="phase-contacted-none">0</strong>
+        <span>Contacted, no reply</span>
+        <small>We sent 1 email. They never wrote back.</small>
+      </button>
+      <button type="button" class="phase phase-followed-none" data-phase="followed-none">
+        <strong id="phase-followed-none">0</strong>
+        <span>Followed up, no reply</span>
+        <small>We sent 2 or more. They still have not replied.</small>
+      </button>
+      <button type="button" class="phase phase-contacted-replied" data-phase="contacted-replied">
+        <strong id="phase-contacted-replied">0</strong>
+        <span>Contacted, replied</span>
+        <small>They answered our first email.</small>
+      </button>
+      <button type="button" class="phase phase-conversation" data-phase="conversation">
+        <strong id="phase-conversation">0</strong>
+        <span>In conversation</span>
+        <small>More than one email each way. Their reply is the latest.</small>
+      </button>
+      <button type="button" class="phase phase-conversation-waiting" data-phase="conversation-waiting">
+        <strong id="phase-conversation-waiting">0</strong>
+        <span>In conversation, no reply</span>
+        <small>They replied before. We wrote again and are waiting.</small>
+      </button>
+      <button type="button" class="phase phase-auto" data-phase="auto">
+        <strong id="phase-auto">0</strong>
+        <span>Auto-reply</span>
+        <small>Out of office or an automatic note, not a person.</small>
+      </button>
+      <button type="button" class="phase phase-bounced" data-phase="bounced">
+        <strong id="phase-bounced">0</strong>
+        <span>Bounced</span>
+        <small>The address rejected the email.</small>
+      </button>
     </section>
 
-    <div class="filters" id="conversations" hidden>
-      <span class="country-label">Conversation</span>
-      <button type="button" class="filter is-active" data-conversation="all">All</button>
-      <button type="button" class="filter" data-conversation="none-1">No reply 1 <span id="conv-none-1"></span></button>
-      <button type="button" class="filter" data-conversation="none-2">No reply 2 <span id="conv-none-2"></span></button>
-      <button type="button" class="filter" data-conversation="none-3">No reply 3 <span id="conv-none-3"></span></button>
-      <button type="button" class="filter" data-conversation="replied-1">Replied 1 <span id="conv-replied-1"></span></button>
-      <button type="button" class="filter" data-conversation="replied-2">Replied 2 <span id="conv-replied-2"></span></button>
-      <button type="button" class="filter" data-conversation="replied-3">Replied 3 <span id="conv-replied-3"></span></button>
-    </div>
-
-    <div class="filters" id="filters" hidden>
-      <label class="country-label" for="country">Tab</label>
-      <select id="country"></select>
-      <button type="button" class="filter is-active" data-filter="all">All</button>
-      <button type="button" class="filter" data-filter="replied">Replied</button>
-      <button type="button" class="filter" data-filter="none">No reply</button>
-      <button type="button" class="filter" data-filter="auto">Auto-reply</button>
-      <button type="button" class="filter" data-filter="bounced">Bounced</button>
-      <button type="button" class="filter" data-filter="not_checked">Not checked</button>
+    <div class="toolbar" id="toolbar" hidden>
+      <label class="toolbar-field" for="country">Tab
+        <select id="country"></select>
+      </label>
+      <label class="toolbar-field grow" for="search">Search
+        <input id="search" type="search" placeholder="University or email" />
+      </label>
+      <p class="showing" id="showing"></p>
     </div>
 
     <div class="table-wrap" id="table-wrap" hidden>
@@ -64,8 +88,10 @@
             <th>Tab</th>
             <th>University</th>
             <th>Email</th>
-            <th>Gmail</th>
-            <th>Conversation</th>
+            <th>Phase</th>
+            <th>Replied</th>
+            <th>We sent</th>
+            <th>They sent</th>
             <th>Reply from</th>
             <th>Date</th>
             <th>Summary</th>
@@ -80,8 +106,8 @@
       <p class="hint" id="followup-count"></p>
       <fieldset class="audience">
         <legend>Send to</legend>
-        <label><input id="aud-none-1" type="checkbox" checked /> No reply 1</label>
-        <label><input id="aud-none-2" type="checkbox" checked /> No reply 2</label>
+        <label><input id="aud-contacted" type="checkbox" checked /> Contacted, no reply</label>
+        <label><input id="aud-followed" type="checkbox" checked /> Followed up, no reply</label>
       </fieldset>
       <label for="followup-subject">Subject</label>
       <input id="followup-subject" type="text" />

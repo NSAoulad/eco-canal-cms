@@ -109,12 +109,11 @@ function buildWorkbook(result) {
     { Metric: "No reply", Value: result.counts.none },
     { Metric: "Auto-reply only", Value: result.counts.auto },
     { Metric: "Bounced", Value: result.counts.bounced },
-    { Metric: "No reply 1", Value: result.counts.none1 },
-    { Metric: "No reply 2", Value: result.counts.none2 },
-    { Metric: "No reply 3", Value: result.counts.none3 },
-    { Metric: "Replied once", Value: result.counts.replied1 },
-    { Metric: "Replied twice", Value: result.counts.replied2 },
-    { Metric: "Replied 3 times", Value: result.counts.replied3 },
+    { Metric: "Contacted, no reply", Value: result.counts.contactedNone },
+    { Metric: "Followed up, no reply", Value: result.counts.followedNone },
+    { Metric: "Contacted, replied", Value: result.counts.contactedReplied },
+    { Metric: "In conversation", Value: result.counts.conversation },
+    { Metric: "In conversation, no reply", Value: result.counts.conversationWaiting },
   ];
   for (const country of result.countries || []) {
     const rows = result.rows.filter((row) => row.country === country);

@@ -3,17 +3,17 @@ const fetchButton = document.querySelector("#fetch");
 const exportButton = document.querySelector("#export");
 const hint = document.querySelector("#hint");
 const errorBox = document.querySelector("#error");
-const stats = document.querySelector("#stats");
-const filters = document.querySelector("#filters");
+const phases = document.querySelector("#phases");
+const toolbar = document.querySelector("#toolbar");
 const tableWrap = document.querySelector("#table-wrap");
 const tbody = document.querySelector("#rows");
 const countrySelect = document.querySelector("#country");
-const conversations = document.querySelector("#conversations");
+const searchInput = document.querySelector("#search");
 
 let result = null;
-let activeFilter = "all";
 let activeCountry = "all";
-let activeConversation = "all";
+let activePhase = "all";
+let searchText = "";
 
 function setError(message) {
   errorBox.hidden = !message;
@@ -38,61 +38,72 @@ function fillCountries() {
   countrySelect.value = activeCountry;
 }
 
-function render() {
-  const rows = result.rows.filter((row) => {
+function visibleRows() {
+  const query = searchText.trim().toLowerCase();
+  return result.rows.filter((row) => {
     const countryOk = activeCountry === "all" || row.country === activeCountry;
-    const statusOk = activeFilter === "all" || row.status === activeFilter;
-    const conversationOk = activeConversation === "all" || row.conversationKey === activeConversation;
-    return countryOk && statusOk && conversationOk;
+    const phaseOk = activePhase === "all" || row.phase === activePhase;
+    const searchOk = !query || `${row.university} ${row.email} ${row.replyFrom}`.toLowerCase().includes(query);
+    return countryOk && phaseOk && searchOk;
   });
-  document.querySelector("#count-total").textContent = String(result.counts.total);
-  document.querySelector("#count-replied").textContent = String(result.counts.gereageerd);
-  document.querySelector("#count-none").textContent = String(result.counts.none);
-  document.querySelector("#count-other").textContent = String(result.counts.auto + result.counts.bounced);
-  document.querySelector("#conv-none-1").textContent = String(result.counts.none1);
-  document.querySelector("#conv-none-2").textContent = String(result.counts.none2);
-  document.querySelector("#conv-none-3").textContent = String(result.counts.none3);
-  document.querySelector("#conv-replied-1").textContent = String(result.counts.replied1);
-  document.querySelector("#conv-replied-2").textContent = String(result.counts.replied2);
-  document.querySelector("#conv-replied-3").textContent = String(result.counts.replied3);
-  stats.hidden = false;
-  filters.hidden = false;
-  conversations.hidden = false;
+}
+
+function render() {
+  const rows = visibleRows();
+  const counts = result.counts;
+  document.querySelector("#phase-all").textContent = String(counts.total);
+  document.querySelector("#phase-contacted-none").textContent = String(counts.contactedNone);
+  document.querySelector("#phase-followed-none").textContent = String(counts.followedNone);
+  document.querySelector("#phase-contacted-replied").textContent = String(counts.contactedReplied);
+  document.querySelector("#phase-conversation").textContent = String(counts.conversation);
+  document.querySelector("#phase-conversation-waiting").textContent = String(counts.conversationWaiting);
+  document.querySelector("#phase-auto").textContent = String(counts.auto);
+  document.querySelector("#phase-bounced").textContent = String(counts.bounced);
+  phases.hidden = false;
+  toolbar.hidden = false;
   tableWrap.hidden = false;
   exportButton.disabled = false;
-  hint.textContent = `${result.counts.tabs} tabs, ${result.counts.total} contacts. No reply 1, 2, or 3 is how many emails we sent with no reply from them. Replied 1, 2, or 3 is how many times they wrote back.`;
+  document.querySelector("#showing").textContent = `${rows.length} shown · ${counts.tabs} tabs`;
+  hint.textContent = "Replied means they wrote back at least once. We sent and They sent are the emails in that thread.";
   tbody.replaceChildren(
     ...rows.map((row) => {
       const tr = document.createElement("tr");
       tr.innerHTML = `
         <td></td>
+        <td class="university"></td>
+        <td></td>
+        <td><span class="phase-pill"></span></td>
+        <td><span class="yesno"></span></td>
+        <td class="num"><span class="count-pill"></span></td>
+        <td class="num"><span class="count-pill"></span></td>
         <td></td>
         <td></td>
-        <td><span class="status status-${row.status}"></span></td>
-        <td><span class="conversation"></span></td>
-        <td></td>
-        <td></td>
-        <td></td>
+        <td class="summary"></td>
       `;
       const cells = tr.children;
       cells[0].textContent = row.country;
       cells[1].textContent = row.university;
       cells[2].textContent = row.email;
-      cells[3].querySelector("span").textContent = row.statusLabel;
-      const conversation = cells[4].querySelector("span");
-      conversation.textContent = row.conversation;
-      conversation.classList.add(`conversation-${row.conversationKey}`);
-      cells[5].textContent = row.replyFrom;
-      cells[6].textContent = row.replyDate;
-      cells[7].textContent = row.summary;
+      const phase = cells[3].querySelector("span");
+      phase.textContent = row.phaseLabel;
+      phase.classList.add(row.phase);
+      const replied = cells[4].querySelector("span");
+      replied.textContent = row.theyReplied ? "Yes" : "No";
+      replied.classList.add(row.theyReplied ? "yesno-yes" : "yesno-no");
+      cells[5].querySelector("span").textContent = String(row.sent);
+      cells[6].querySelector("span").textContent = String(row.replied);
+      cells[7].textContent = row.replyFrom;
+      cells[8].textContent = row.replyDate;
+      cells[9].textContent = row.summary;
+      cells[9].title = row.summary;
       return tr;
     })
   );
   if (!rows.length) {
     const tr = document.createElement("tr");
     const td = document.createElement("td");
-    td.colSpan = 8;
-    td.textContent = "Nothing in this filter.";
+    td.colSpan = 10;
+    td.textContent = "Nothing matches this phase.";
     tr.appendChild(td);
     tbody.replaceChildren(tr);
   }
@@ -151,11 +162,11 @@ async function downloadExcel() {
   }
 }
 
-filters.addEventListener("click", (event) => {
-  const button = event.target.closest("[data-filter]");
+phases.addEventListener("click", (event) => {
+  const button = event.target.closest("[data-phase]");
   if (!button || !result) return;
-  activeFilter = button.dataset.filter;
-  for (const item of filters.querySelectorAll(".filter")) {
+  activePhase = button.dataset.phase;
+  for (const item of phases.querySelectorAll(".phase")) {
     item.classList.toggle("is-active", item === button);
   }
   render();
@@ -166,14 +177,9 @@ countrySelect.addEventListener("change", () => {
   if (result) render();
 });
 
-conversations.addEventListener("click", (event) => {
-  const button = event.target.closest("[data-conversation]");
-  if (!button || !result) return;
-  activeConversation = button.dataset.conversation;
-  for (const item of conversations.querySelectorAll(".filter")) {
-    item.classList.toggle("is-active", item === button);
-  }
-  render();
+searchInput.addEventListener("input", () => {
+  searchText = searchInput.value;
+  if (result) render();
 });
 
 const followup = document.querySelector("#followup");
@@ -187,8 +193,8 @@ const followupStatus = document.querySelector("#followup-status");
 const sendConfirm = document.querySelector("#send-confirm");
 const sendConfirmText = document.querySelector("#send-confirm-text");
 const previewLabel = document.querySelector("#preview-label");
-const audienceNone1 = document.querySelector("#aud-none-1");
-const audienceNone2 = document.querySelector("#aud-none-2");
+const audienceContacted = document.querySelector("#aud-contacted");
+const audienceFollowed = document.querySelector("#aud-followed");
 let previewIndex = 0;
 
 const FOLLOWUP_SUBJECT = "Re: Internship placements in Amsterdam with Eco Boats Amsterdam and Canal Motorboats";
@@ -222,8 +228,8 @@ function noReplyRows() {
   return result.rows.filter((row) => {
     if (row.replied !== 0 || row.status === "auto" || row.status === "bounced") return false;
     if (answeredDomains.has(domainOf(row.email))) return false;
-    if (row.conversationKey === "none-1") return audienceNone1.checked;
-    if (row.conversationKey === "none-2") return audienceNone2.checked;
+    if (row.phase === "contacted-none") return audienceContacted.checked;
+    if (row.phase === "followed-none") return audienceFollowed.checked;
     return false;
   });
 }
@@ -238,16 +244,16 @@ function renderFollowup() {
   if (!followupSubject.value) followupSubject.value = FOLLOWUP_SUBJECT;
   if (!followupBody.value) followupBody.value = FOLLOWUP_BODY;
   if (previewIndex >= rows.length) previewIndex = 0;
-  const sentOnce = rows.filter((row) => row.conversationKey === "none-1").length;
-  const sentTwice = rows.filter((row) => row.conversationKey === "none-2").length;
+  const contacted = rows.filter((row) => row.phase === "contacted-none").length;
+  const followed = rows.filter((row) => row.phase === "followed-none").length;
   followupCount.textContent = rows.length
-    ? `${rows.length} separate emails. ${sentOnce} are no reply 1 and ${sentTwice} are no reply 2. {university} is filled in for each one.`
+    ? `${rows.length} separate emails. ${contacted} were contacted with no reply, and ${followed} were followed up with no reply. {university} is filled in for each one.`
     : "No addresses selected.";
   const sample = rows[previewIndex];
   previewLabel.textContent = sample ? `${previewIndex + 1} of ${rows.length} · ${sample.university}` : "No recipient";
   followupPreview.textContent = sample
     ? `To: ${sample.email}\nSubject: ${fillTemplate(followupSubject.value, sample.university)}\n\n${fillTemplate(followupBody.value, sample.university)}`
-    : "Choose no reply 1 or no reply 2.";
+    : "Choose contacted or followed up.";
 }
 
 function insertUniversity() {
@@ -330,8 +336,8 @@ fetchButton.addEventListener("click", fetchEmails);
 exportButton.addEventListener("click", downloadExcel);
 followupSubject.addEventListener("input", () => result && renderFollowup());
 followupBody.addEventListener("input", () => result && renderFollowup());
-audienceNone1.addEventListener("change", () => result && renderFollowup());
-audienceNone2.addEventListener("change", () => result && renderFollowup());
+audienceContacted.addEventListener("change", () => result && renderFollowup());
+audienceFollowed.addEventListener("change", () => result && renderFollowup());
 document.querySelector("#insert-university").addEventListener("click", insertUniversity);
 document.querySelector("#preview-prev").addEventListener("click", () => {
   const rows = noReplyRows();
