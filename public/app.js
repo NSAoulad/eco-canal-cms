@@ -1,5 +1,6 @@
 const sheetInput = document.querySelector("#sheet-url");
 const fetchButton = document.querySelector("#fetch");
+const syncButton = document.querySelector("#sync");
 const exportButton = document.querySelector("#export");
 const hint = document.querySelector("#hint");
 const errorBox = document.querySelector("#error");
@@ -11,6 +12,7 @@ const countrySelect = document.querySelector("#country");
 const searchInput = document.querySelector("#search");
 
 let result = null;
+let gmailStatus = null;
 let activeCountry = "all";
 let activePhase = "all";
 let searchText = "";
@@ -97,7 +99,14 @@ function render() {
   tableWrap.hidden = false;
   exportButton.disabled = false;
   document.querySelector("#showing").textContent = `${rows.length} shown · ${counts.tabs} tabs`;
-  hint.textContent = "Replied means they wrote back at least once. We sent and They sent are the emails in that thread.";
+  const checked = result.checkedAt ? new Date(result.checkedAt) : null;
+  const checkedLabel = checked && !Number.isNaN(checked.getTime())
+    ? checked.toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" })
+    : result.checkedAt || "";
+  const source = String(result.checkedAt || "").includes("T")
+    ? `Gmail synced ${checkedLabel}.`
+    : `Mailbox snapshot ${checkedLabel}. Use Sync Gmail to refresh it.`;
+  hint.textContent = `${source} Replied means they wrote back at least once. We sent and They sent are the emails in that thread.`;
   tbody.replaceChildren(
     ...rows.map((row) => {
       const tr = document.createElement("tr");
@@ -174,6 +183,47 @@ async function fetchEmails() {
   } finally {
     fetchButton.disabled = false;
     fetchButton.textContent = "Fetch emails";
+  }
+}
+
+function syncLabel() {
+  if (gmailStatus?.configured && !gmailStatus.connected) return "Connect Gmail";
+  return "Sync Gmail";
+}
+
+async function refreshGmailStatus() {
+  const response = await fetch("/api/gmail/status");
+  gmailStatus = await response.json();
+  syncButton.textContent = syncLabel();
+}
+
+async function syncGmail() {
+  setError("");
+  if (gmailStatus?.configured && !gmailStatus.connected) {
+    window.location.href = "/api/gmail/auth";
+    return;
+  }
+  syncButton.disabled = true;
+  syncButton.textContent = "Syncing Gmail…";
+  try {
+    const response = await fetch("/api/sync", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ sheetUrl: sheetInput.value.trim() }),
+    });
+    const body = await response.json();
+    if (!response.ok) throw new Error(body.error || "Could not sync Gmail.");
+    if (!body.result) throw new Error(body.error || "Gmail synced, but the sheet could not be loaded.");
+    result = body.result;
+    fillCountries();
+    render();
+    renderFollowup();
+    await refreshGmailStatus();
+  } catch (error) {
+    setError(error.message);
+  } finally {
+    syncButton.disabled = false;
+    syncButton.textContent = syncLabel();
   }
 }
 
@@ -388,6 +438,7 @@ document.querySelector(".tabs").addEventListener("click", (event) => {
 });
 
 fetchButton.addEventListener("click", fetchEmails);
+syncButton.addEventListener("click", syncGmail);
 exportButton.addEventListener("click", downloadExcel);
 followupSubject.addEventListener("input", () => result && renderFollowup());
 followupBody.addEventListener("input", () => result && renderFollowup());
@@ -413,10 +464,15 @@ document.querySelector("#send-confirm-no").addEventListener("click", () => {
   sendConfirm.hidden = true;
 });
 
-fetch("/api/defaults")
-  .then((response) => response.json())
-  .then((body) => {
+const justConnected = new URLSearchParams(location.search).get("gmail") === "connected";
+if (justConnected) history.replaceState({}, "", "/");
+
+Promise.all([
+  fetch("/api/defaults").then((response) => response.json()),
+  refreshGmailStatus(),
+])
+  .then(([body]) => {
     sheetInput.value = body.sheetUrl;
-    return fetchEmails();
+    return justConnected ? syncGmail() : fetchEmails();
   })
   .catch((error) => setError(error.message));

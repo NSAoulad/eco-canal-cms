@@ -2,4 +2,6 @@ node_modules/
 .env
 .env.*
 data/outbox.json
+data/gmail-pages/
+data/gmail-token.json
 

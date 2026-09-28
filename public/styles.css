@@ -103,10 +103,13 @@ button:disabled {
 
 #fetch:hover:not(:disabled) { background: var(--teal-dark); }
 
+#sync,
 #export {
   background: #efe8dc;
   color: var(--ink);
 }
+
+#sync:hover:not(:disabled) { background: #e4d9c8; }
 
 .hint { margin: 10px 0 0; font-size: 13px; }
 .error { margin: 10px 0 0; color: var(--danger); }

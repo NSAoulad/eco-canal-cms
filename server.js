@@ -4,8 +4,55 @@ const fs = require("fs");
 const path = require("path");
 const XLSX = require("xlsx");
 const { DEFAULT_SHEET_URL, toXlsxUrl, matchWorkbook, workbookRows } = require("./lib/sheet");
+const {
+  authUrl,
+  consumeAuthState,
+  createAuthState,
+  exchangeCode,
+  gmailStatus,
+  loadMailbox,
+  setupError,
+  syncMailbox,
+} = require("./lib/gmail");
+
+function loadEnv() {
+  const file = path.join(__dirname, ".env");
+  if (!fs.existsSync(file)) return;
+  for (const line of fs.readFileSync(file, "utf8").split(/\r?\n/)) {
+    const trimmed = line.trim();
+    if (!trimmed || trimmed.startsWith("#") || !trimmed.includes("=")) continue;
+    const eq = trimmed.indexOf("=");
+    const key = trimmed.slice(0, eq).trim();
+    let value = trimmed.slice(eq + 1).trim();
+    if ((value.startsWith('"') && value.endsWith('"')) || (value.startsWith("'") && value.endsWith("'"))) {
+      value = value.slice(1, -1);
+    }
+    if (key && process.env[key] == null) process.env[key] = value;
+  }
+}
+
+loadEnv();
 
 const PORT = Number(process.env.PORT) || 4173;
+const GMAIL_SITE = "eco-canal-cms.vercel.app";
+
+function cookieValue(req, name) {
+  const header = String(req.headers.cookie || "");
+  const match = header.match(new RegExp(`(?:^|;\\s*)${name}=([^;]*)`));
+  return match ? decodeURIComponent(match[1]) : "";
+}
+
+function gmailCallbackUrl(req) {
+  const host = String(req.headers.host || "").split(":")[0].toLowerCase();
+  if (host === GMAIL_SITE) return `https://${GMAIL_SITE}/api/gmail/callback`;
+  return `http://127.0.0.1:${PORT}/api/gmail/callback`;
+}
+
+function setCookie(name, value, { maxAge, secure }) {
+  const parts = [`${name}=${encodeURIComponent(value)}`, "HttpOnly", "Path=/", "SameSite=Lax", `Max-Age=${maxAge}`];
+  if (secure) parts.push("Secure");
+  return parts.join("; ");
+}
 const PUBLIC_DIR = path.join(__dirname, "public");
 
 const MIME = {
@@ -14,6 +61,12 @@ const MIME = {
   ".css": "text/css; charset=utf-8",
   ".json": "application/json; charset=utf-8",
 };
+
+function sendHtml(res, status, html) {
+  const payload = `<!DOCTYPE html><html><body style="font:16px/1.45 Segoe UI,sans-serif;padding:32px">${html}</body></html>`;
+  res.writeHead(status, { "Content-Type": "text/html; charset=utf-8" });
+  res.end(payload);
+}
 
 function sendJson(res, status, body) {
   const payload = JSON.stringify(body);
@@ -76,7 +129,8 @@ async function fetchSheet(sheetUrl) {
   if (buffer.slice(0, 2).toString() !== "PK") {
     throw new Error("Google Sheets did not return the workbook. It may be private.");
   }
-  return matchWorkbook(buffer);
+  const mailbox = loadMailbox();
+  return matchWorkbook(buffer, mailbox.replyFile, mailbox.conversations, mailbox.emailLinks);
 }
 
 const COLUMN_WIDTHS = [
@@ -160,6 +214,80 @@ const server = http.createServer(async (req, res) => {
     const url = new URL(req.url, `http://${req.headers.host}`);
     if (req.method === "GET" && url.pathname === "/api/defaults") {
       sendJson(res, 200, { sheetUrl: DEFAULT_SHEET_URL });
+      return;
+    }
+    if (req.method === "GET" && url.pathname === "/api/gmail/status") {
+      const callback = gmailCallbackUrl(req);
+      sendJson(res, 200, gmailStatus(callback, cookieValue(req, "gmail_refresh")));
+      return;
+    }
+    if (req.method === "GET" && url.pathname === "/api/gmail/auth") {
+      const callback = gmailCallbackUrl(req);
+      if (!gmailStatus(callback).configured) {
+        sendHtml(res, 400, `<p>${setupError(callback)}</p><p><a href="/">Back</a></p>`);
+        return;
+      }
+      const state = createAuthState();
+      const secure = callback.startsWith("https:");
+      res.writeHead(302, {
+        Location: authUrl(callback, state),
+        "Set-Cookie": setCookie("gmail_oauth_state", state, { maxAge: 600, secure }),
+      });
+      res.end();
+      return;
+    }
+    if (req.method === "GET" && url.pathname === "/api/gmail/callback") {
+      const callback = gmailCallbackUrl(req);
+      const secure = callback.startsWith("https:");
+      if (!consumeAuthState(url.searchParams.get("state") || "", cookieValue(req, "gmail_oauth_state"))) {
+        sendHtml(res, 400, `<p>This Gmail connection link expired. <a href="/">Go back</a> and connect again.</p>`);
+        return;
+      }
+      if (url.searchParams.get("error")) {
+        sendHtml(res, 400, `<p>Google did not connect the mailbox. <a href="/">Go back</a></p>`);
+        return;
+      }
+      const refreshToken = await exchangeCode(callback, url.searchParams.get("code") || "");
+      res.writeHead(302, {
+        Location: "/?gmail=connected",
+        "Set-Cookie": [
+          setCookie("gmail_refresh", refreshToken, { maxAge: 60 * 60 * 24 * 365, secure }),
+          setCookie("gmail_oauth_state", "", { maxAge: 0, secure }),
+        ],
+      });
+      res.end();
+      return;
+    }
+    if (req.method === "POST" && url.pathname === "/api/sync") {
+      const callback = gmailCallbackUrl(req);
+      const status = gmailStatus(callback, cookieValue(req, "gmail_refresh"));
+      if (!status.configured) {
+        sendJson(res, 400, { error: setupError(callback) });
+        return;
+      }
+      if (!status.connected) {
+        sendJson(res, 400, { error: "Connect Gmail before syncing." });
+        return;
+      }
+      const body = JSON.parse((await readBody(req)) || "{}");
+      const synced = await syncMailbox(cookieValue(req, "gmail_refresh"));
+      const summary = {
+        mailbox: synced.mailbox,
+        checkedAt: synced.checkedAt,
+        threads: synced.threads,
+        replies: synced.replies,
+        contacts: synced.contacts,
+      };
+      try {
+        const buffer = await getBuffer(toXlsxUrl(body.sheetUrl || DEFAULT_SHEET_URL));
+        if (buffer.slice(0, 2).toString() !== "PK") {
+          throw new Error("Google Sheets did not return the workbook. It may be private.");
+        }
+        const result = matchWorkbook(buffer, synced.replyFile, synced.conversations, synced.emailLinks);
+        sendJson(res, 200, { ...summary, result });
+      } catch (error) {
+        sendJson(res, 200, { ...summary, error: error.message || "Gmail synced, but the sheet could not be loaded." });
+      }
       return;
     }
     if (req.method === "POST" && url.pathname === "/api/fetch") {
