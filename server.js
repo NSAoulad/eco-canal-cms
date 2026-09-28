@@ -109,6 +109,7 @@ function buildWorkbook(result) {
     { Metric: "No reply", Value: result.counts.none },
     { Metric: "Auto-reply only", Value: result.counts.auto },
     { Metric: "Bounced", Value: result.counts.bounced },
+    { Metric: "Not contacted yet", Value: result.counts.notContacted },
     { Metric: "Contacted, no reply", Value: result.counts.contactedNone },
     { Metric: "Followed up, no reply", Value: result.counts.followedNone },
     { Metric: "Contacted, replied", Value: result.counts.contactedReplied },

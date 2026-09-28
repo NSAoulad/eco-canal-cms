@@ -52,6 +52,7 @@ function render() {
   const rows = visibleRows();
   const counts = result.counts;
   document.querySelector("#phase-all").textContent = String(counts.total);
+  document.querySelector("#phase-not-contacted").textContent = String(counts.notContacted);
   document.querySelector("#phase-contacted-none").textContent = String(counts.contactedNone);
   document.querySelector("#phase-followed-none").textContent = String(counts.followedNone);
   document.querySelector("#phase-contacted-replied").textContent = String(counts.contactedReplied);

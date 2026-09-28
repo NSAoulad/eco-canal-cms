@@ -154,6 +154,7 @@ button:disabled {
   box-shadow: inset 3px 0 0 var(--teal);
 }
 
+.phase.phase-not-contacted { box-shadow: inset 3px 0 0 #9aa3b2; }
 .phase.phase-contacted-none { box-shadow: inset 3px 0 0 #8b93a0; }
 .phase.phase-followed-none { box-shadow: inset 3px 0 0 #b5812a; }
 .phase.phase-contacted-replied { box-shadow: inset 3px 0 0 #1f8a52; }
@@ -291,6 +292,7 @@ tr:last-child td { border-bottom: 0; }
 }
 
 .phase-pill { background: #eef0f2; color: #4d5864; }
+.phase-pill.phase-not-contacted { background: #e7eaf0; color: #3d4652; }
 .phase-pill.phase-contacted-none { background: #eef0f2; color: #3d4652; }
 .phase-pill.phase-followed-none { background: #f8efd8; color: #7a5410; }
 .phase-pill.phase-contacted-replied,
@@ -298,7 +300,6 @@ tr:last-child td { border-bottom: 0; }
 .phase-pill.phase-conversation-waiting { background: #e7eef6; color: #2b4d73; }
 .phase-pill.phase-auto { background: #f8efd8; color: #7a5410; }
 .phase-pill.phase-bounced { background: #f8e4e4; color: #8d2b2b; }
-.phase-pill.phase-not-found { background: #eef0f2; color: #4d5864; }
 
 .yesno-yes { background: #e5f4ec; color: #14663d; }
 .yesno-no { background: #eef0f2; color: #4d5864; }
