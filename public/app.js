@@ -182,6 +182,14 @@ const followupSubject = document.querySelector("#followup-subject");
 const followupBody = document.querySelector("#followup-body");
 const followupPreview = document.querySelector("#followup-preview");
 const followupDownload = document.querySelector("#followup-download");
+const followupDrafts = document.querySelector("#followup-drafts");
+const followupStatus = document.querySelector("#followup-status");
+const sendConfirm = document.querySelector("#send-confirm");
+const sendConfirmText = document.querySelector("#send-confirm-text");
+const previewLabel = document.querySelector("#preview-label");
+const audienceNone1 = document.querySelector("#aud-none-1");
+const audienceNone2 = document.querySelector("#aud-none-2");
+let previewIndex = 0;
 
 const FOLLOWUP_SUBJECT = "Re: Internship placements in Amsterdam with Eco Boats Amsterdam and Canal Motorboats";
 const FOLLOWUP_BODY = `Dear {university},
@@ -211,7 +219,13 @@ function noReplyRows() {
   for (const row of result.rows) {
     if (row.status === "replied") answeredDomains.add(domainOf(row.email));
   }
-  return result.rows.filter((row) => row.replied === 0 && row.status !== "auto" && row.status !== "bounced" && !answeredDomains.has(domainOf(row.email)));
+  return result.rows.filter((row) => {
+    if (row.replied !== 0 || row.status === "auto" || row.status === "bounced") return false;
+    if (answeredDomains.has(domainOf(row.email))) return false;
+    if (row.conversationKey === "none-1") return audienceNone1.checked;
+    if (row.conversationKey === "none-2") return audienceNone2.checked;
+    return false;
+  });
 }
 
 function fillTemplate(template, university) {
@@ -223,19 +237,67 @@ function renderFollowup() {
   followup.hidden = false;
   if (!followupSubject.value) followupSubject.value = FOLLOWUP_SUBJECT;
   if (!followupBody.value) followupBody.value = FOLLOWUP_BODY;
+  if (previewIndex >= rows.length) previewIndex = 0;
   const sentOnce = rows.filter((row) => row.conversationKey === "none-1").length;
   const sentTwice = rows.filter((row) => row.conversationKey === "none-2").length;
-  const sentMore = rows.filter((row) => row.sent >= 3).length;
-  const waiting = result.rows.filter((row) => row.replied === 0 && row.status !== "auto" && row.status !== "bounced").length;
-  const skipped = waiting - rows.length;
-  const parts = [`${sentOnce} after 1 email from us`, `${sentTwice} after 2 emails`];
-  if (sentMore) parts.push(`${sentMore} after 3 or more`);
-  const skippedNote = skipped ? ` ${skipped} skipped because someone at that university already replied.` : "";
-  followupCount.textContent = `${rows.length} addresses with no reply: ${parts.join(", ")}.${skippedNote}`;
-  const sample = rows[0];
+  followupCount.textContent = rows.length
+    ? `${rows.length} separate emails. ${sentOnce} are no reply 1 and ${sentTwice} are no reply 2. {university} is filled in for each one.`
+    : "No addresses selected.";
+  const sample = rows[previewIndex];
+  previewLabel.textContent = sample ? `${previewIndex + 1} of ${rows.length} · ${sample.university}` : "No recipient";
   followupPreview.textContent = sample
     ? `To: ${sample.email}\nSubject: ${fillTemplate(followupSubject.value, sample.university)}\n\n${fillTemplate(followupBody.value, sample.university)}`
-    : "No addresses in this group.";
+    : "Choose no reply 1 or no reply 2.";
+}
+
+function insertUniversity() {
+  const token = "{university}";
+  const start = followupBody.selectionStart ?? followupBody.value.length;
+  const end = followupBody.selectionEnd ?? start;
+  followupBody.value = `${followupBody.value.slice(0, start)}${token}${followupBody.value.slice(end)}`;
+  const cursor = start + token.length;
+  followupBody.focus();
+  followupBody.setSelectionRange(cursor, cursor);
+  renderFollowup();
+}
+
+function askForDrafts() {
+  const rows = noReplyRows();
+  if (!rows.length) {
+    followupStatus.textContent = "Select at least one group.";
+    return;
+  }
+  const sample = rows[previewIndex] || rows[0];
+  sendConfirm.hidden = false;
+  sendConfirmText.textContent = `Prepare ${rows.length} emails for marketing@ecoboatsamsterdam.com. The first one starts “Dear ${sample.university}”. Nothing is sent.`;
+}
+
+async function createDrafts() {
+  const rows = noReplyRows();
+  sendConfirm.hidden = true;
+  followupDrafts.disabled = true;
+  followupStatus.textContent = `Saving ${rows.length} personalized emails…`;
+  try {
+    const messages = rows.map((row) => ({
+      to: row.email,
+      university: row.university,
+      country: row.country,
+      subject: fillTemplate(followupSubject.value, row.university),
+      body: fillTemplate(followupBody.value, row.university),
+    }));
+    const response = await fetch("/api/outbox", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ messages }),
+    });
+    const body = await response.json();
+    if (!response.ok) throw new Error(body.error || "Could not save the emails.");
+    followupStatus.textContent = `Prepared ${body.saved} emails. {university} is already replaced with each university name. Nothing has been sent.`;
+  } catch (error) {
+    followupStatus.textContent = error.message;
+  } finally {
+    followupDrafts.disabled = false;
+  }
 }
 
 function csvCell(value) {
@@ -268,7 +330,27 @@ fetchButton.addEventListener("click", fetchEmails);
 exportButton.addEventListener("click", downloadExcel);
 followupSubject.addEventListener("input", () => result && renderFollowup());
 followupBody.addEventListener("input", () => result && renderFollowup());
+audienceNone1.addEventListener("change", () => result && renderFollowup());
+audienceNone2.addEventListener("change", () => result && renderFollowup());
+document.querySelector("#insert-university").addEventListener("click", insertUniversity);
+document.querySelector("#preview-prev").addEventListener("click", () => {
+  const rows = noReplyRows();
+  if (!rows.length) return;
+  previewIndex = (previewIndex - 1 + rows.length) % rows.length;
+  renderFollowup();
+});
+document.querySelector("#preview-next").addEventListener("click", () => {
+  const rows = noReplyRows();
+  if (!rows.length) return;
+  previewIndex = (previewIndex + 1) % rows.length;
+  renderFollowup();
+});
 followupDownload.addEventListener("click", downloadFollowups);
+followupDrafts.addEventListener("click", askForDrafts);
+document.querySelector("#send-confirm-yes").addEventListener("click", createDrafts);
+document.querySelector("#send-confirm-no").addEventListener("click", () => {
+  sendConfirm.hidden = true;
+});
 
 fetch("/api/defaults")
   .then((response) => response.json())

@@ -76,17 +76,40 @@
     </div>
 
     <section class="panel followup" id="followup" hidden>
-      <h2>Follow-up for no reply</h2>
+      <h2>Bulk email</h2>
       <p class="hint" id="followup-count"></p>
+      <fieldset class="audience">
+        <legend>Send to</legend>
+        <label><input id="aud-none-1" type="checkbox" checked /> No reply 1</label>
+        <label><input id="aud-none-2" type="checkbox" checked /> No reply 2</label>
+      </fieldset>
       <label for="followup-subject">Subject</label>
       <input id="followup-subject" type="text" />
-      <label for="followup-body">Email</label>
-      <textarea id="followup-body" rows="16"></textarea>
-      <p class="hint">Use {university} where the name should go. Each no-reply address gets its own copy.</p>
-      <div class="fetch-row">
-        <button id="followup-download" type="button">Download follow-up CSV</button>
+      <div class="variable-row">
+        <span>Placeholder</span>
+        <button id="insert-university" type="button">{university}</button>
       </div>
+      <label for="followup-body">Email</label>
+      <textarea id="followup-body" rows="14"></textarea>
+      <p class="hint">Each address gets its own email. <code>{university}</code> is replaced with that row’s university name.</p>
+      <div class="fetch-row">
+        <button id="followup-drafts" type="button">Prepare emails</button>
+        <button id="followup-download" type="button">Download mail merge</button>
+      </div>
+      <div class="confirm" id="send-confirm" hidden>
+        <p id="send-confirm-text"></p>
+        <div class="fetch-row">
+          <button id="send-confirm-yes" type="button">Prepare these emails</button>
+          <button id="send-confirm-no" type="button">Cancel</button>
+        </div>
+      </div>
+      <p class="hint" id="followup-status"></p>
       <h3>Preview</h3>
+      <div class="preview-nav">
+        <button id="preview-prev" type="button">Previous</button>
+        <span id="preview-label"></span>
+        <button id="preview-next" type="button">Next</button>
+      </div>
       <pre id="followup-preview"></pre>
     </section>
 

@@ -263,7 +263,39 @@ tr:last-child td { border-bottom: 0; }
 }
 #followup-subject { height: 40px; padding: 0 12px; }
 #followup-body { padding: 12px; resize: vertical; }
-#followup-download { background: var(--teal); color: #fff; }
+#followup-drafts { background: var(--teal); color: #fff; }
+#followup-download { background: #efe8dc; color: var(--ink); }
+.audience {
+  margin: 12px 0 0;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+.audience legend { padding: 0 6px; font-size: 13px; font-weight: 650; }
+.audience label { display: inline-flex; align-items: center; gap: 6px; margin: 0 16px 0 0; }
+.variable-row, .preview-nav {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-top: 12px;
+}
+.variable-row span, .preview-nav span { color: var(--muted); font-size: 13px; }
+#insert-university, #preview-prev, #preview-next, #send-confirm-no {
+  height: 32px;
+  background: transparent;
+  border: 1px solid var(--line);
+  color: var(--ink);
+}
+#insert-university { font-family: Consolas, monospace; }
+.confirm {
+  margin-top: 12px;
+  padding: 12px;
+  background: #f7f3ec;
+  border-radius: 8px;
+}
+.confirm p { margin: 0 0 10px; }
+#send-confirm-yes { background: var(--teal); color: #fff; }
+code { font-family: Consolas, monospace; }
 #followup-preview {
   margin: 0;
   padding: 12px;

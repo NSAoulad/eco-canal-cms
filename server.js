@@ -183,6 +183,34 @@ const server = http.createServer(async (req, res) => {
       res.end(buffer);
       return;
     }
+    if (req.method === "POST" && url.pathname === "/api/outbox") {
+      const body = JSON.parse((await readBody(req)) || "{}");
+      const messages = Array.isArray(body.messages) ? body.messages : [];
+      if (!messages.length) {
+        sendJson(res, 400, { error: "There are no emails to save." });
+        return;
+      }
+      const saved = messages
+        .filter((message) => message && typeof message.to === "string" && message.to.includes("@"))
+        .map((message) => ({
+          to: String(message.to).trim(),
+          university: String(message.university || "").trim(),
+          country: String(message.country || "").trim(),
+          subject: String(message.subject || ""),
+          body: String(message.body || ""),
+        }));
+      if (saved.some((message) => message.body.includes("{university}") || message.subject.includes("{university}"))) {
+        sendJson(res, 400, { error: "A university name was still missing from one email." });
+        return;
+      }
+      const file = path.join(__dirname, "data", "outbox.json");
+      fs.writeFileSync(
+        file,
+        JSON.stringify({ savedAt: new Date().toISOString(), mailbox: "marketing@ecoboatsamsterdam.com", messages: saved }, null, 2)
+      );
+      sendJson(res, 200, { saved: saved.length });
+      return;
+    }
     if (req.method === "GET") {
       serveStatic(req, res);
       return;
