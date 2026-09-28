@@ -138,7 +138,15 @@ button:disabled {
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
+  align-items: center;
   margin-top: 16px;
+}
+
+#filters { margin-top: 8px; }
+
+.filter span {
+  margin-left: 4px;
+  font-variant-numeric: tabular-nums;
 }
 
 .country-label {
@@ -182,7 +190,7 @@ button:disabled {
 table {
   width: 100%;
   border-collapse: collapse;
-  min-width: 860px;
+  min-width: 980px;
 }
 
 th, td {
@@ -218,6 +226,52 @@ tr:last-child td { border-bottom: 0; }
 .status-auto { background: #f8efd8; color: #7a5410; }
 .status-bounced { background: #f8e4e4; color: #8d2b2b; }
 .status-not_checked { background: #e7eef6; color: #2b4d73; }
+
+.conversation {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+  background: #eef0f2;
+  color: #4d5864;
+}
+
+.conversation-replied-1,
+.conversation-replied-2,
+.conversation-replied-3,
+.conversation-replied-4 { background: #e5f4ec; color: #14663d; }
+.conversation-auto { background: #f8efd8; color: #7a5410; }
+.conversation-bounced { background: #f8e4e4; color: #8d2b2b; }
+
+.followup { margin-top: 18px; }
+.followup h2, .followup h3 {
+  margin: 0 0 8px;
+  font-family: Georgia, serif;
+  font-weight: 600;
+}
+.followup h3 { margin-top: 16px; font-size: 18px; }
+.followup label { margin-top: 12px; }
+#followup-subject, #followup-body {
+  width: 100%;
+  border: 1px solid #d5cec3;
+  border-radius: 8px;
+  background: #fff;
+  color: var(--ink);
+  font: inherit;
+}
+#followup-subject { height: 40px; padding: 0 12px; }
+#followup-body { padding: 12px; resize: vertical; }
+#followup-download { background: var(--teal); color: #fff; }
+#followup-preview {
+  margin: 0;
+  padding: 12px;
+  white-space: pre-wrap;
+  background: #f7f3ec;
+  border-radius: 8px;
+  font: 14px/1.45 "Segoe UI", sans-serif;
+}
 
 @media (max-width: 800px) {
   body { padding: 20px 14px 40px; }

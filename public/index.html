@@ -35,6 +35,17 @@
       <article><strong id="count-other">0</strong><span>Auto-reply or bounce</span></article>
     </section>
 
+    <div class="filters" id="conversations" hidden>
+      <span class="country-label">Conversation</span>
+      <button type="button" class="filter is-active" data-conversation="all">All</button>
+      <button type="button" class="filter" data-conversation="none-1">No reply 1 <span id="conv-none-1"></span></button>
+      <button type="button" class="filter" data-conversation="none-2">No reply 2 <span id="conv-none-2"></span></button>
+      <button type="button" class="filter" data-conversation="none-3">No reply 3 <span id="conv-none-3"></span></button>
+      <button type="button" class="filter" data-conversation="replied-1">Replied 1 <span id="conv-replied-1"></span></button>
+      <button type="button" class="filter" data-conversation="replied-2">Replied 2 <span id="conv-replied-2"></span></button>
+      <button type="button" class="filter" data-conversation="replied-3">Replied 3 <span id="conv-replied-3"></span></button>
+    </div>
+
     <div class="filters" id="filters" hidden>
       <label class="country-label" for="country">Tab</label>
       <select id="country"></select>
@@ -54,6 +65,7 @@
             <th>University</th>
             <th>Email</th>
             <th>Gmail</th>
+            <th>Conversation</th>
             <th>Reply from</th>
             <th>Date</th>
             <th>Summary</th>
@@ -62,6 +74,21 @@
         <tbody id="rows"></tbody>
       </table>
     </div>
+
+    <section class="panel followup" id="followup" hidden>
+      <h2>Follow-up for no reply</h2>
+      <p class="hint" id="followup-count"></p>
+      <label for="followup-subject">Subject</label>
+      <input id="followup-subject" type="text" />
+      <label for="followup-body">Email</label>
+      <textarea id="followup-body" rows="16"></textarea>
+      <p class="hint">Use {university} where the name should go. Each no-reply address gets its own copy.</p>
+      <div class="fetch-row">
+        <button id="followup-download" type="button">Download follow-up CSV</button>
+      </div>
+      <h3>Preview</h3>
+      <pre id="followup-preview"></pre>
+    </section>
 
     <script src="/app.js"></script>
   </body>

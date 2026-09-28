@@ -1,0 +1,1443 @@
+{
+  "countedAt": "2026-09-28",
+  "mailbox": "marketing@ecoboatsamsterdam.com",
+  "threads": 389,
+  "emails": {
+    "1loopsts@uva.nl": {
+      "sent": 1,
+      "replied": 1
+    },
+    "3030@hkr.se": {
+      "sent": 0,
+      "replied": 1
+    },
+    "abk@usz.edu.pl": {
+      "sent": 1,
+      "replied": 1
+    },
+    "accueil.general@univ-lyon2.fr": {
+      "sent": 1,
+      "replied": 1
+    },
+    "admissions@thelisbonmba.com": {
+      "sent": 1,
+      "replied": 0
+    },
+    "alternance@rennes-sb.com": {
+      "sent": 0,
+      "replied": 1
+    },
+    "alumni@fh-wien.ac.at": {
+      "sent": 1,
+      "replied": 1
+    },
+    "ana.boaventura@ipleiria.pt": {
+      "sent": 1,
+      "replied": 0
+    },
+    "anita.rybacka@ug.edu.pl": {
+      "sent": 2,
+      "replied": 1
+    },
+    "annamagdalena.drusko@fh-joanneum.at": {
+      "sent": 2,
+      "replied": 0
+    },
+    "annons@chalmersrekrytering.se": {
+      "sent": 1,
+      "replied": 0
+    },
+    "asa-employers@brookes.ac.uk": {
+      "sent": 1,
+      "replied": 1
+    },
+    "ask@han.nl": {
+      "sent": 1,
+      "replied": 0
+    },
+    "athena-office@uvigo.gal": {
+      "sent": 1,
+      "replied": 0
+    },
+    "au@au.dk": {
+      "sent": 1,
+      "replied": 0
+    },
+    "audenciacareers@audencia.com": {
+      "sent": 1,
+      "replied": 0
+    },
+    "automation@deustouni.atlassian.net": {
+      "sent": 0,
+      "replied": 1
+    },
+    "bcs@imc.ac.at": {
+      "sent": 1,
+      "replied": 1
+    },
+    "biuro.karier@pg.edu.pl": {
+      "sent": 1,
+      "replied": 1
+    },
+    "biuro.karier@pw.edu.pl": {
+      "sent": 1,
+      "replied": 1
+    },
+    "biurokarier@adm.uw.edu.pl": {
+      "sent": 1,
+      "replied": 1
+    },
+    "biurokarier@pollub.pl": {
+      "sent": 2,
+      "replied": 0
+    },
+    "biurokarier@pw.edu.pl": {
+      "sent": 1,
+      "replied": 1
+    },
+    "biurokarier@ue.wroc.pl": {
+      "sent": 1,
+      "replied": 1
+    },
+    "biurokarier@ug.edu.pl": {
+      "sent": 2,
+      "replied": 1
+    },
+    "biurokarier@umk.pl": {
+      "sent": 2,
+      "replied": 1
+    },
+    "biurokarier@uni.lodz.pl": {
+      "sent": 2,
+      "replied": 0
+    },
+    "biurokarier@uwr.edu.pl": {
+      "sent": 1,
+      "replied": 0
+    },
+    "bk@ue.poznan.pl": {
+      "sent": 2,
+      "replied": 1
+    },
+    "bk@us.edu.pl": {
+      "sent": 1,
+      "replied": 0
+    },
+    "bkarier@amu.edu.pl": {
+      "sent": 2,
+      "replied": 1
+    },
+    "brk@mail.umcs.pl": {
+      "sent": 2,
+      "replied": 1
+    },
+    "brk@umcs.pl": {
+      "sent": 2,
+      "replied": 1
+    },
+    "business-school-careers@exeter.ac.uk": {
+      "sent": 1,
+      "replied": 0
+    },
+    "business.school@sam.sdu.dk": {
+      "sent": 1,
+      "replied": 0
+    },
+    "c.biehl@verw.uni-koeln.de": {
+      "sent": 1,
+      "replied": 0
+    },
+    "campus-recruitment@solvay.edu": {
+      "sent": 1,
+      "replied": 1
+    },
+    "campusmassan@oru.se": {
+      "sent": 1,
+      "replied": 1
+    },
+    "career-centre@nhh.no": {
+      "sent": 1,
+      "replied": 0
+    },
+    "career-service@fh-salzburg.ac.at": {
+      "sent": 1,
+      "replied": 1
+    },
+    "career-service@handels.gu.se": {
+      "sent": 1,
+      "replied": 1
+    },
+    "career-service@uibk.ac.at": {
+      "sent": 2,
+      "replied": 2
+    },
+    "career.center@dauphine.psl.eu": {
+      "sent": 1,
+      "replied": 1
+    },
+    "career.services@webster.ac.at": {
+      "sent": 2,
+      "replied": 0
+    },
+    "career@aau.dk": {
+      "sent": 1,
+      "replied": 1
+    },
+    "career@baaa.dk": {
+      "sent": 1,
+      "replied": 0
+    },
+    "career@ehl.lu.se": {
+      "sent": 2,
+      "replied": 2
+    },
+    "career@imc.ac.at": {
+      "sent": 1,
+      "replied": 1
+    },
+    "career@mau.se": {
+      "sent": 1,
+      "replied": 1
+    },
+    "career@mci.edu": {
+      "sent": 2,
+      "replied": 0
+    },
+    "career@modul.ac.at": {
+      "sent": 2,
+      "replied": 0
+    },
+    "career@plus.ac.at": {
+      "sent": 1,
+      "replied": 1
+    },
+    "careeracademy@tue.nl": {
+      "sent": 1,
+      "replied": 0
+    },
+    "careercenter@em-lyon.com": {
+      "sent": 1,
+      "replied": 1
+    },
+    "careercenter@ju.se": {
+      "sent": 1,
+      "replied": 1
+    },
+    "careercenter@ugent.be": {
+      "sent": 1,
+      "replied": 1
+    },
+    "careercenter@uliege.be": {
+      "sent": 1,
+      "replied": 1
+    },
+    "careercenter@uni-graz.at": {
+      "sent": 2,
+      "replied": 1
+    },
+    "careercentre@fontys.nl": {
+      "sent": 1,
+      "replied": 0
+    },
+    "careercentre@rsm.nl": {
+      "sent": 1,
+      "replied": 1
+    },
+    "careercentre@tudelft.nl": {
+      "sent": 1,
+      "replied": 1
+    },
+    "careerdevelopment@dbs.ie": {
+      "sent": 1,
+      "replied": 0
+    },
+    "careerguidance@vub.be": {
+      "sent": 1,
+      "replied": 0
+    },
+    "careerhub@unibz.it": {
+      "sent": 1,
+      "replied": 1
+    },
+    "careermanagement@hhs.se": {
+      "sent": 3,
+      "replied": 2
+    },
+    "careers-employers@york.ac.uk": {
+      "sent": 1,
+      "replied": 1
+    },
+    "careers-placements@york.ac.uk": {
+      "sent": 1,
+      "replied": 1
+    },
+    "careers-sme-engagement@bristol.ac.uk": {
+      "sent": 2,
+      "replied": 2
+    },
+    "careers-team@nottingham.ac.uk": {
+      "sent": 1,
+      "replied": 0
+    },
+    "careers-uobinterns@bristol.ac.uk": {
+      "sent": 2,
+      "replied": 2
+    },
+    "careers.city@tudublin.ie": {
+      "sent": 1,
+      "replied": 1
+    },
+    "careers.employers@lse.ac.uk": {
+      "sent": 1,
+      "replied": 2
+    },
+    "careers.events@ucl.ac.uk": {
+      "sent": 1,
+      "replied": 1
+    },
+    "careers.fb@insead.edu": {
+      "sent": 1,
+      "replied": 0
+    },
+    "careers.internships@lse.ac.uk": {
+      "sent": 1,
+      "replied": 0
+    },
+    "careers@cbs.dk": {
+      "sent": 1,
+      "replied": 2
+    },
+    "careers@plymouth.ac.uk": {
+      "sent": 1,
+      "replied": 0
+    },
+    "careers@regents.ac.uk": {
+      "sent": 1,
+      "replied": 1
+    },
+    "careers@tse-fr.eu": {
+      "sent": 1,
+      "replied": 0
+    },
+    "careers@ucc.ie": {
+      "sent": 1,
+      "replied": 2
+    },
+    "careers@ucd.ie": {
+      "sent": 1,
+      "replied": 1
+    },
+    "careers@ul.ie": {
+      "sent": 2,
+      "replied": 1
+    },
+    "careers@uu.se": {
+      "sent": 1,
+      "replied": 1
+    },
+    "careers@vlerick.com": {
+      "sent": 1,
+      "replied": 1
+    },
+    "careerservice@luiss.it": {
+      "sent": 1,
+      "replied": 0
+    },
+    "careerservice@ru.nl": {
+      "sent": 1,
+      "replied": 1
+    },
+    "careerservice@unipi.it": {
+      "sent": 1,
+      "replied": 0
+    },
+    "careerservices.sbe@vu.nl": {
+      "sent": 1,
+      "replied": 1
+    },
+    "careerservices@eur.nl": {
+      "sent": 1,
+      "replied": 1
+    },
+    "careerservices@hu.nl": {
+      "sent": 1,
+      "replied": 0
+    },
+    "careerservices@maastrichtuniversity.nl": {
+      "sent": 1,
+      "replied": 1
+    },
+    "careerservices@sea.leidenuniv.nl": {
+      "sent": 1,
+      "replied": 1
+    },
+    "careerservices@uu.nl": {
+      "sent": 1,
+      "replied": 1
+    },
+    "careerzone@fh-ooe.at": {
+      "sent": 2,
+      "replied": 0
+    },
+    "careerzone@uel.ac.uk": {
+      "sent": 1,
+      "replied": 2
+    },
+    "carina.baccman@kau.se": {
+      "sent": 1,
+      "replied": 0
+    },
+    "carrierebegeleiding@otrs.vub.be": {
+      "sent": 0,
+      "replied": 1
+    },
+    "carrieres@ax.polytechnique.org": {
+      "sent": 1,
+      "replied": 0
+    },
+    "cc-employers@st-andrews.ac.uk": {
+      "sent": 1,
+      "replied": 1
+    },
+    "cdc@esmt.org": {
+      "sent": 1,
+      "replied": 1
+    },
+    "cdi@pbs.up.pt": {
+      "sent": 1,
+      "replied": 0
+    },
+    "cellule.emploi@unamur.be": {
+      "sent": 1,
+      "replied": 1
+    },
+    "centrointernacional@us.es": {
+      "sent": 1,
+      "replied": 0
+    },
+    "ceucareers@ceu.edu": {
+      "sent": 2,
+      "replied": 0
+    },
+    "ciu@unizar.es": {
+      "sent": 1,
+      "replied": 0
+    },
+    "ckagh@agh.edu.pl": {
+      "sent": 1,
+      "replied": 1
+    },
+    "ckwa@ue.katowice.pl": {
+      "sent": 1,
+      "replied": 1
+    },
+    "communication.corporate@neoma-bs.fr": {
+      "sent": 1,
+      "replied": 0
+    },
+    "comunicacio@uic.es": {
+      "sent": 1,
+      "replied": 0
+    },
+    "connect@avans.nl": {
+      "sent": 1,
+      "replied": 1
+    },
+    "contact@iep.edu.eu": {
+      "sent": 1,
+      "replied": 0
+    },
+    "corporate-relations@tbs-education.com": {
+      "sent": 1,
+      "replied": 0
+    },
+    "corporateconnections@edhec.edu": {
+      "sent": 1,
+      "replied": 0
+    },
+    "corporaterelations@skema.edu": {
+      "sent": 1,
+      "replied": 1
+    },
+    "cosie@univ-lyon2.fr": {
+      "sent": 1,
+      "replied": 1
+    },
+    "cpk@put.poznan.pl": {
+      "sent": 2,
+      "replied": 0
+    },
+    "cvillard@escpalumni.org": {
+      "sent": 1,
+      "replied": 1
+    },
+    "daniela.englisch@uni-ulm.de": {
+      "sent": 1,
+      "replied": 0
+    },
+    "deborah.seddon@atu.ie": {
+      "sent": 1,
+      "replied": 2
+    },
+    "dpo@uib.es": {
+      "sent": 1,
+      "replied": 0
+    },
+    "dri@uc.pt": {
+      "sent": 1,
+      "replied": 0
+    },
+    "dzial.karier@vistula.edu.pl": {
+      "sent": 1,
+      "replied": 1
+    },
+    "e.reitoria@ulisboa.pt": {
+      "sent": 1,
+      "replied": 0
+    },
+    "ealvarep@nebrija.es": {
+      "sent": 1,
+      "replied": 0
+    },
+    "elissaldec@excelia-group.com": {
+      "sent": 0,
+      "replied": 1
+    },
+    "elke.franek-edlmayr@fhwn.ac.at": {
+      "sent": 2,
+      "replied": 2
+    },
+    "ellen.neefs@ams.ac.be": {
+      "sent": 1,
+      "replied": 1
+    },
+    "emma.skelton@tcd.ie": {
+      "sent": 3,
+      "replied": 2
+    },
+    "emmelia.haglind@lnu.se": {
+      "sent": 1,
+      "replied": 0
+    },
+    "employ@southampton.ac.uk": {
+      "sent": 1,
+      "replied": 1
+    },
+    "employability@gre.ac.uk": {
+      "sent": 1,
+      "replied": 0
+    },
+    "employability@lsbu.ac.uk": {
+      "sent": 1,
+      "replied": 0
+    },
+    "employer.careers@tcd.ie": {
+      "sent": 3,
+      "replied": 2
+    },
+    "employerrelations@wbs.ac.uk": {
+      "sent": 1,
+      "replied": 1
+    },
+    "employers@abdn.ac.uk": {
+      "sent": 1,
+      "replied": 0
+    },
+    "employers@brookes.ac.uk": {
+      "sent": 1,
+      "replied": 1
+    },
+    "employers@careers.cam.ac.uk": {
+      "sent": 2,
+      "replied": 1
+    },
+    "employers@chester.ac.uk": {
+      "sent": 1,
+      "replied": 1
+    },
+    "employers@ed.ac.uk": {
+      "sent": 1,
+      "replied": 1
+    },
+    "employers@glasgow.ac.uk": {
+      "sent": 1,
+      "replied": 1
+    },
+    "employers@kcl.ac.uk": {
+      "sent": 2,
+      "replied": 0
+    },
+    "employers@london.edu": {
+      "sent": 4,
+      "replied": 2
+    },
+    "employers@mu.ie": {
+      "sent": 1,
+      "replied": 0
+    },
+    "employers@sbs.ox.ac.uk": {
+      "sent": 1,
+      "replied": 0
+    },
+    "employers@st-andrews.ac.uk": {
+      "sent": 1,
+      "replied": 1
+    },
+    "employers@surrey.ac.uk": {
+      "sent": 1,
+      "replied": 0
+    },
+    "employers@ucl.ac.uk": {
+      "sent": 2,
+      "replied": 1
+    },
+    "employers@universityofgalway.ie": {
+      "sent": 1,
+      "replied": 1
+    },
+    "employerservices@cardiff.ac.uk": {
+      "sent": 1,
+      "replied": 0
+    },
+    "employerteam@leeds.ac.uk": {
+      "sent": 1,
+      "replied": 1
+    },
+    "entreprises@excelia-group.com": {
+      "sent": 1,
+      "replied": 0
+    },
+    "erasmus.incoming@uah.es": {
+      "sent": 1,
+      "replied": 0
+    },
+    "erasmus@uni-greifswald.de": {
+      "sent": 1,
+      "replied": 0
+    },
+    "erasmuspracticas@ugr.es": {
+      "sent": 1,
+      "replied": 0
+    },
+    "erhvervssamarbejde@itu.dk": {
+      "sent": 1,
+      "replied": 1
+    },
+    "ero@uac.pt": {
+      "sent": 1,
+      "replied": 0
+    },
+    "espace-avenir@unistra.fr": {
+      "sent": 1,
+      "replied": 0
+    },
+    "europa@zv.uni-freiburg.de": {
+      "sent": 1,
+      "replied": 0
+    },
+    "exchange.fbe@uantwerp.be": {
+      "sent": 1,
+      "replied": 1
+    },
+    "execed@ie.edu": {
+      "sent": 1,
+      "replied": 0
+    },
+    "externalrelations@hhs.nl": {
+      "sent": 1,
+      "replied": 0
+    },
+    "fiona.deane@dcu.ie": {
+      "sent": 0,
+      "replied": 1
+    },
+    "formacao@turismodeportugal.pt": {
+      "sent": 1,
+      "replied": 0
+    },
+    "frontoffice.ama@saxion.nl": {
+      "sent": 2,
+      "replied": 1
+    },
+    "gabinete@reitoria.uma.pt": {
+      "sent": 1,
+      "replied": 0
+    },
+    "gcii@reitoria.uminho.pt": {
+      "sent": 1,
+      "replied": 0
+    },
+    "gcri@uab.pt": {
+      "sent": 1,
+      "replied": 0
+    },
+    "geral@esht.ipp.pt": {
+      "sent": 1,
+      "replied": 0
+    },
+    "geral@iscte.pt": {
+      "sent": 1,
+      "replied": 0
+    },
+    "globalpartnerships@excelia-group.com": {
+      "sent": 0,
+      "replied": 1
+    },
+    "gri@fundacaofernandopessoa.pt": {
+      "sent": 1,
+      "replied": 0
+    },
+    "hectalents-employerengagement@hec.fr": {
+      "sent": 1,
+      "replied": 0
+    },
+    "helpdesk@hh.se": {
+      "sent": 0,
+      "replied": 1
+    },
+    "hillemann-delaney@tu-berlin.de": {
+      "sent": 1,
+      "replied": 0
+    },
+    "hiretalent@kent.ac.uk": {
+      "sent": 3,
+      "replied": 2
+    },
+    "ibemployers@imperial.ac.uk": {
+      "sent": 1,
+      "replied": 0
+    },
+    "ida.mastroviti@uniba.it": {
+      "sent": 1,
+      "replied": 0
+    },
+    "impressum@rwth-aachen.de": {
+      "sent": 1,
+      "replied": 0
+    },
+    "info-co-cb@hva.nl": {
+      "sent": 1,
+      "replied": 1
+    },
+    "info-slb@uclouvain.be": {
+      "sent": 1,
+      "replied": 0
+    },
+    "info.cul@ulusofona.pt": {
+      "sent": 1,
+      "replied": 0
+    },
+    "info@arteveldehs.be": {
+      "sent": 2,
+      "replied": 1
+    },
+    "info@ehb.be": {
+      "sent": 1,
+      "replied": 0
+    },
+    "info@esmt.org": {
+      "sent": 1,
+      "replied": 1
+    },
+    "info@grenoble-em.com": {
+      "sent": 1,
+      "replied": 0
+    },
+    "info@hkr.se": {
+      "sent": 1,
+      "replied": 0
+    },
+    "info@hogent.be": {
+      "sent": 1,
+      "replied": 0
+    },
+    "info@howest.be": {
+      "sent": 1,
+      "replied": 0
+    },
+    "info@liu.se": {
+      "sent": 1,
+      "replied": 0
+    },
+    "info@mdu.se": {
+      "sent": 1,
+      "replied": 0
+    },
+    "info@org.hanze.nl": {
+      "sent": 1,
+      "replied": 0
+    },
+    "info@thomasmore.be": {
+      "sent": 1,
+      "replied": 0
+    },
+    "info@ualg.pt": {
+      "sent": 1,
+      "replied": 0
+    },
+    "info@uni-tuebingen.de": {
+      "sent": 1,
+      "replied": 0
+    },
+    "infocom@ucm.es": {
+      "sent": 1,
+      "replied": 1
+    },
+    "infor-emploi@ulb.be": {
+      "sent": 1,
+      "replied": 1
+    },
+    "informacion.general@uam.es": {
+      "sent": 1,
+      "replied": 0
+    },
+    "informacion@usal.es": {
+      "sent": 1,
+      "replied": 0
+    },
+    "insertion.professionnelle@universite-paris-saclay.fr": {
+      "sent": 1,
+      "replied": 0
+    },
+    "internacionales@um.es": {
+      "sent": 1,
+      "replied": 0
+    },
+    "international-office@uni-hamburg.de": {
+      "sent": 1,
+      "replied": 0
+    },
+    "international.agreements@reitoria.unl.pt": {
+      "sent": 1,
+      "replied": 0
+    },
+    "international.porto@ucp.pt": {
+      "sent": 1,
+      "replied": 0
+    },
+    "international.projects@unipd.it": {
+      "sent": 1,
+      "replied": 0
+    },
+    "international.relations@novasbe.pt": {
+      "sent": 1,
+      "replied": 0
+    },
+    "international@griffith.ie": {
+      "sent": 1,
+      "replied": 0
+    },
+    "international@international.uni-mainz.de": {
+      "sent": 1,
+      "replied": 0
+    },
+    "international@lmu.de": {
+      "sent": 1,
+      "replied": 0
+    },
+    "international@pha.dk": {
+      "sent": 1,
+      "replied": 0
+    },
+    "international@ua.pt": {
+      "sent": 1,
+      "replied": 0
+    },
+    "international@uni-bonn.de": {
+      "sent": 1,
+      "replied": 1
+    },
+    "international@uni-erfurt.de": {
+      "sent": 1,
+      "replied": 1
+    },
+    "international@uni-leipzig.de": {
+      "sent": 1,
+      "replied": 1
+    },
+    "internationaldesk@unibo.it": {
+      "sent": 1,
+      "replied": 1
+    },
+    "internationaleangelegenheiten@verwaltung.uni-muenchen.de": {
+      "sent": 0,
+      "replied": 1
+    },
+    "internazionalizzazione@unifi.it": {
+      "sent": 1,
+      "replied": 1
+    },
+    "internship@aur.edu": {
+      "sent": 1,
+      "replied": 0
+    },
+    "internship@bi.no": {
+      "sent": 1,
+      "replied": 1
+    },
+    "internship@iulm.it": {
+      "sent": 1,
+      "replied": 1
+    },
+    "internships.feb@rug.nl": {
+      "sent": 1,
+      "replied": 1
+    },
+    "internships@contacts.bham.ac.uk": {
+      "sent": 1,
+      "replied": 1
+    },
+    "internships@plymouth.ac.uk": {
+      "sent": 1,
+      "replied": 1
+    },
+    "intra@dcu.ie": {
+      "sent": 1,
+      "replied": 0
+    },
+    "isabelle.boelens@arteveldehs.be": {
+      "sent": 2,
+      "replied": 1
+    },
+    "isabelle.tanchou@polytechniciens.com": {
+      "sent": 0,
+      "replied": 1
+    },
+    "iscet@iscet.pt": {
+      "sent": 1,
+      "replied": 0
+    },
+    "iwa.wcislo-maslanka@us.edu.pl": {
+      "sent": 0,
+      "replied": 2
+    },
+    "joanna.jettmar-fojut@pg.edu.pl": {
+      "sent": 1,
+      "replied": 1
+    },
+    "jobpostings@tugraz.at": {
+      "sent": 2,
+      "replied": 0
+    },
+    "judit.ayala@iqs.url.edu": {
+      "sent": 2,
+      "replied": 3
+    },
+    "kariera@polsl.pl": {
+      "sent": 2,
+      "replied": 0
+    },
+    "kariera@ur.edu.pl": {
+      "sent": 2,
+      "replied": 0
+    },
+    "kariery@uek.krakow.pl": {
+      "sent": 1,
+      "replied": 1
+    },
+    "kariery@uj.edu.pl": {
+      "sent": 1,
+      "replied": 1
+    },
+    "karriar@uu.se": {
+      "sent": 1,
+      "replied": 1
+    },
+    "karriere@aau.at": {
+      "sent": 2,
+      "replied": 0
+    },
+    "karriere@adm.aau.dk": {
+      "sent": 1,
+      "replied": 1
+    },
+    "karriere@dtu.dk": {
+      "sent": 1,
+      "replied": 1
+    },
+    "karriere@oslomet.no": {
+      "sent": 1,
+      "replied": 0
+    },
+    "karriere@ruc.dk": {
+      "sent": 0,
+      "replied": 1
+    },
+    "karriere@sammen.no": {
+      "sent": 1,
+      "replied": 0
+    },
+    "karriere@uia.no": {
+      "sent": 1,
+      "replied": 1
+    },
+    "karriere@usn.no": {
+      "sent": 1,
+      "replied": 0
+    },
+    "karrierecenter@jku.at": {
+      "sent": 2,
+      "replied": 0
+    },
+    "karriereportalen@bi.no": {
+      "sent": 1,
+      "replied": 1
+    },
+    "karrieretjenester@admin.uio.no": {
+      "sent": 1,
+      "replied": 1
+    },
+    "karriereveiledning@uis.no": {
+      "sent": 1,
+      "replied": 0
+    },
+    "kontakt@bridge.ntnu.no": {
+      "sent": 1,
+      "replied": 0
+    },
+    "kontakt@iib.ntnu.no": {
+      "sent": 1,
+      "replied": 1
+    },
+    "kontakt@miun.se": {
+      "sent": 1,
+      "replied": 0
+    },
+    "kpolak@sgh.waw.pl": {
+      "sent": 1,
+      "replied": 1
+    },
+    "krkn@iba.dk": {
+      "sent": 1,
+      "replied": 1
+    },
+    "ku@ku.dk": {
+      "sent": 1,
+      "replied": 0
+    },
+    "l.clabaut@ieseg.fr": {
+      "sent": 1,
+      "replied": 1
+    },
+    "lettres-conventionsstages@sorbonne-universite.fr": {
+      "sent": 1,
+      "replied": 0
+    },
+    "libj@eadania.dk": {
+      "sent": 1,
+      "replied": 1
+    },
+    "lsm-career-events@uclouvain.be": {
+      "sent": 1,
+      "replied": 1
+    },
+    "lums@lancaster.ac.uk": {
+      "sent": 1,
+      "replied": 0
+    },
+    "m.t.cook@kent.ac.uk": {
+      "sent": 1,
+      "replied": 0
+    },
+    "manuela.linde@uni-erfurt.de": {
+      "sent": 1,
+      "replied": 1
+    },
+    "marqueting@ub.edu": {
+      "sent": 1,
+      "replied": 0
+    },
+    "mobilita@univda.it": {
+      "sent": 1,
+      "replied": 1
+    },
+    "monika.sakka@hwr-berlin.de": {
+      "sent": 2,
+      "replied": 2
+    },
+    "movifeet@ull.edu.es": {
+      "sent": 1,
+      "replied": 0
+    },
+    "naringsliv@ths.kth.se": {
+      "sent": 1,
+      "replied": 1
+    },
+    "ncicareersteam@ncirl.ie": {
+      "sent": 1,
+      "replied": 0
+    },
+    "noreply@upt.pt": {
+      "sent": 0,
+      "replied": 1
+    },
+    "nubs.employability@newcastle.ac.uk": {
+      "sent": 1,
+      "replied": 0
+    },
+    "office@tucareer.com": {
+      "sent": 2,
+      "replied": 0
+    },
+    "office@uniport.at": {
+      "sent": 1,
+      "replied": 1
+    },
+    "office@zbp.at": {
+      "sent": 1,
+      "replied": 1
+    },
+    "olga.osullivan@ul.ie": {
+      "sent": 2,
+      "replied": 2
+    },
+    "oliver.tatler@regents.ac.uk": {
+      "sent": 1,
+      "replied": 1
+    },
+    "ope.empleo@uam.es": {
+      "sent": 0,
+      "replied": 1
+    },
+    "petra.eulaers@arteveldehs.be": {
+      "sent": 2,
+      "replied": 1
+    },
+    "petra.kienle@verwaltung.de": {
+      "sent": 1,
+      "replied": 0
+    },
+    "pkowalska@kozminski.edu.pl": {
+      "sent": 2,
+      "replied": 1
+    },
+    "placement@unibz.it": {
+      "sent": 1,
+      "replied": 1
+    },
+    "plaine@essec.edu": {
+      "sent": 1,
+      "replied": 0
+    },
+    "platsbanken@oru.se": {
+      "sent": 1,
+      "replied": 1
+    },
+    "polo.emprego@mail.uma.pt": {
+      "sent": 1,
+      "replied": 1
+    },
+    "post@verwaltung.uni-hohenheim.de": {
+      "sent": 1,
+      "replied": 0
+    },
+    "postmottak@inn.no": {
+      "sent": 1,
+      "replied": 0
+    },
+    "postmottak@nord.no": {
+      "sent": 1,
+      "replied": 0
+    },
+    "practicas.internacionales@deusto.es": {
+      "sent": 1,
+      "replied": 0
+    },
+    "practiques@urv.cat": {
+      "sent": 1,
+      "replied": 0
+    },
+    "praesident@fu-berlin.de": {
+      "sent": 1,
+      "replied": 0
+    },
+    "praktik@ek.dk": {
+      "sent": 1,
+      "replied": 1
+    },
+    "praktyki.swps@swps.edu.pl": {
+      "sent": 2,
+      "replied": 2
+    },
+    "praxis.studi@hwr-berlin.de": {
+      "sent": 2,
+      "replied": 2
+    },
+    "praxis.unternehmen@hwr-berlin.de": {
+      "sent": 2,
+      "replied": 2
+    },
+    "rbs-connect@hr.nl": {
+      "sent": 1,
+      "replied": 1
+    },
+    "reachtalent@su.se": {
+      "sent": 1,
+      "replied": 2
+    },
+    "recruit@bath.ac.uk": {
+      "sent": 1,
+      "replied": 0
+    },
+    "recruitment@manchester.ac.uk": {
+      "sent": 2,
+      "replied": 1
+    },
+    "recrutement.alternance@rennes-sb.com": {
+      "sent": 1,
+      "replied": 0
+    },
+    "relacions.internacionals@uv.es": {
+      "sent": 1,
+      "replied": 0
+    },
+    "relationsentreprises@telecom-paris.fr": {
+      "sent": 1,
+      "replied": 0
+    },
+    "researchmobility@uni-passau.de": {
+      "sent": 1,
+      "replied": 1
+    },
+    "reseaupro@u-paris.fr": {
+      "sent": 1,
+      "replied": 0
+    },
+    "ri@upt.pt": {
+      "sent": 1,
+      "replied": 0
+    },
+    "rickard.lindberg@umu.se": {
+      "sent": 1,
+      "replied": 1
+    },
+    "ruc@ruc.dk": {
+      "sent": 1,
+      "replied": 1
+    },
+    "sabrina.lundstroem@admin.uni-giessen.de": {
+      "sent": 1,
+      "replied": 0
+    },
+    "samfunnskontakt@uit.no": {
+      "sent": 1,
+      "replied": 0
+    },
+    "sarah.wilewski@leuphana.de": {
+      "sent": 1,
+      "replied": 0
+    },
+    "scpo.carrieres@sciencespo.fr": {
+      "sent": 1,
+      "replied": 1
+    },
+    "secretaria.turismo@uma.es": {
+      "sent": 1,
+      "replied": 0
+    },
+    "sekretariat@isz.uni-heidelberg.de": {
+      "sent": 1,
+      "replied": 0
+    },
+    "selina.oregan@ucc.ie": {
+      "sent": 1,
+      "replied": 1
+    },
+    "servicecenter@hv.se": {
+      "sent": 1,
+      "replied": 0
+    },
+    "servicecenter@miun.se": {
+      "sent": 0,
+      "replied": 1
+    },
+    "serwis.kariera@sgh.waw.pl": {
+      "sent": 1,
+      "replied": 1
+    },
+    "sgeneral@upo.es": {
+      "sent": 1,
+      "replied": 0
+    },
+    "sint@uni-wuerzburg.de": {
+      "sent": 1,
+      "replied": 0
+    },
+    "soie@univ-lyon1.fr": {
+      "sent": 1,
+      "replied": 0
+    },
+    "sportellomobstud@unige.it": {
+      "sent": 1,
+      "replied": 0
+    },
+    "stage-tp.ama@saxion.nl": {
+      "sent": 2,
+      "replied": 1
+    },
+    "stage.estero@unive.it": {
+      "sent": 1,
+      "replied": 1
+    },
+    "stage@unibs.it": {
+      "sent": 1,
+      "replied": 0
+    },
+    "stagebureau.mt.leuven@ucll.be": {
+      "sent": 1,
+      "replied": 1
+    },
+    "stages-alternance@kedgebs.com": {
+      "sent": 1,
+      "replied": 1
+    },
+    "stages.ad@ephec.be": {
+      "sent": 1,
+      "replied": 0
+    },
+    "stages@ieseg.fr": {
+      "sent": 1,
+      "replied": 1
+    },
+    "studentcareerscentre@uva.nl": {
+      "sent": 1,
+      "replied": 1
+    },
+    "studentcareerservices@buas.nl": {
+      "sent": 1,
+      "replied": 0
+    },
+    "studentcareerservices@tilburguniversity.edu": {
+      "sent": 1,
+      "replied": 1
+    },
+    "studentcareerservices@uvt.nl": {
+      "sent": 1,
+      "replied": 1
+    },
+    "studentcareerservices@wur.nl": {
+      "sent": 1,
+      "replied": 1
+    },
+    "studentinfo@nhlstenden.com": {
+      "sent": 1,
+      "replied": 1
+    },
+    "studentpoint@uhasselt.be": {
+      "sent": 1,
+      "replied": 0
+    },
+    "studier.karriar@sh.se": {
+      "sent": 1,
+      "replied": 2
+    },
+    "studier@kristiania.no": {
+      "sent": 1,
+      "replied": 1
+    },
+    "studievagledning@hh.se": {
+      "sent": 1,
+      "replied": 0
+    },
+    "studieveileder-hh@nmbu.no": {
+      "sent": 1,
+      "replied": 2
+    },
+    "studievejledning@kp.dk": {
+      "sent": 1,
+      "replied": 1
+    },
+    "study@iep.edu.eu": {
+      "sent": 1,
+      "replied": 0
+    },
+    "summer-internships@careers.ox.ac.uk": {
+      "sent": 1,
+      "replied": 1
+    },
+    "support@du.se": {
+      "sent": 1,
+      "replied": 1
+    },
+    "susanna.siegl@technikum-wien.at": {
+      "sent": 2,
+      "replied": 0
+    },
+    "t.emmerson@imperial.ac.uk": {
+      "sent": 2,
+      "replied": 2
+    },
+    "talent@mmu.ac.uk": {
+      "sent": 1,
+      "replied": 1
+    },
+    "tania.vandenbergh@arteveldehs.be": {
+      "sent": 2,
+      "replied": 2
+    },
+    "tconstantouris@london.edu": {
+      "sent": 3,
+      "replied": 2
+    },
+    "tkej@via.dk": {
+      "sent": 2,
+      "replied": 1
+    },
+    "uevora@uevora.pt": {
+      "sent": 1,
+      "replied": 0
+    },
+    "uitinfo@uit.no": {
+      "sent": 0,
+      "replied": 2
+    },
+    "unescochair@unito.it": {
+      "sent": 1,
+      "replied": 0
+    },
+    "v014_team@ads.uni-passau.de": {
+      "sent": 1,
+      "replied": 1
+    },
+    "valentina.dellacorte@unina.it": {
+      "sent": 1,
+      "replied": 0
+    },
+    "valentina.tinacci@unisi.it": {
+      "sent": 1,
+      "replied": 0
+    },
+    "vicedecano.rrii@turismo.uma.es": {
+      "sent": 1,
+      "replied": 0
+    },
+    "vicmovi@ull.edu.es": {
+      "sent": 1,
+      "replied": 0
+    },
+    "vr.ric@ua.es": {
+      "sent": 1,
+      "replied": 0
+    },
+    "vri@uji.es": {
+      "sent": 1,
+      "replied": 1
+    },
+    "wannes.vandenbosch@kdg.be": {
+      "sent": 1,
+      "replied": 0
+    },
+    "werkgever@kuleuven.be": {
+      "sent": 1,
+      "replied": 1
+    },
+    "yoan.vilain@hu-berlin.de": {
+      "sent": 1,
+      "replied": 0
+    },
+    "zealand@zealand.dk": {
+      "sent": 1,
+      "replied": 0
+    }
+  }
+}

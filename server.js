@@ -89,6 +89,9 @@ const COLUMN_WIDTHS = [
   { wch: 42 },
   { wch: 42 },
   { wch: 18 },
+  { wch: 14 },
+  { wch: 14 },
+  { wch: 28 },
   { wch: 36 },
   { wch: 14 },
   { wch: 72 },
@@ -106,6 +109,12 @@ function buildWorkbook(result) {
     { Metric: "No reply", Value: result.counts.none },
     { Metric: "Auto-reply only", Value: result.counts.auto },
     { Metric: "Bounced", Value: result.counts.bounced },
+    { Metric: "No reply 1", Value: result.counts.none1 },
+    { Metric: "No reply 2", Value: result.counts.none2 },
+    { Metric: "No reply 3", Value: result.counts.none3 },
+    { Metric: "Replied once", Value: result.counts.replied1 },
+    { Metric: "Replied twice", Value: result.counts.replied2 },
+    { Metric: "Replied 3 times", Value: result.counts.replied3 },
   ];
   for (const country of result.countries || []) {
     const rows = result.rows.filter((row) => row.country === country);
