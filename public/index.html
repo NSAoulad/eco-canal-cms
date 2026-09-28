@@ -17,6 +17,13 @@
       </div>
     </header>
 
+    <nav class="tabs" aria-label="Sections">
+      <button type="button" class="tab is-active" data-view="replies">Replies</button>
+      <button type="button" class="tab" data-view="bulk">Bulk email</button>
+    </nav>
+
+    <div id="view-replies">
+
     <section class="panel" aria-label="Fetch contacts">
       <label for="sheet-url">Google Sheet link</label>
       <div class="fetch-row">
@@ -101,7 +108,10 @@
       </table>
     </div>
 
-    <section class="panel followup" id="followup" hidden>
+    </div>
+
+    <div id="view-bulk" hidden>
+    <section class="panel followup" id="followup">
       <h2>Bulk email</h2>
       <p class="hint" id="followup-count"></p>
       <fieldset class="audience">
@@ -138,6 +148,7 @@
       </div>
       <pre id="followup-preview"></pre>
     </section>
+    </div>
 
     <script src="/app.js"></script>
   </body>

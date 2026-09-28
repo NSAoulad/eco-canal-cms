@@ -20,8 +20,8 @@ body {
   font: 15px/1.45 "Segoe UI", sans-serif;
 }
 
-.top, .panel, .phases, .toolbar, .table-wrap {
-  max-width: 1180px;
+.top, .panel, .phases, .toolbar, .tabs, .table-wrap {
+  max-width: none;
   margin-left: auto;
   margin-right: auto;
 }
@@ -202,6 +202,26 @@ button:disabled {
   font-size: 13px;
 }
 
+.tabs {
+  display: flex;
+  gap: 8px;
+  margin-top: 18px;
+}
+
+.tab {
+  height: 36px;
+  padding: 0 14px;
+  background: transparent;
+  border: 1px solid var(--line);
+  color: var(--ink);
+}
+
+.tab.is-active {
+  background: var(--ink);
+  color: #fff;
+  border-color: var(--ink);
+}
+
 .table-wrap {
   margin-top: 12px;
   overflow: auto;
@@ -213,8 +233,19 @@ button:disabled {
 table {
   width: 100%;
   border-collapse: collapse;
-  min-width: 980px;
+  table-layout: auto;
 }
+
+th:nth-child(1), td:nth-child(1) { width: 4%; }
+th:nth-child(2), td:nth-child(2) { width: 14%; }
+th:nth-child(3), td:nth-child(3) { width: 16%; }
+th:nth-child(4), td:nth-child(4) { width: 14%; }
+th:nth-child(5), td:nth-child(5) { width: 6%; }
+th:nth-child(6), td:nth-child(6) { width: 6%; }
+th:nth-child(7), td:nth-child(7) { width: 6%; }
+th:nth-child(8), td:nth-child(8) { width: 14%; }
+th:nth-child(9), td:nth-child(9) { width: 7%; white-space: nowrap; }
+th:nth-child(10), td:nth-child(10) { width: 13%; }
 
 th, td {
   padding: 10px 12px;
@@ -274,18 +305,11 @@ tr:last-child td { border-bottom: 0; }
 .count-pill { background: #f7f3ec; color: var(--ink); min-width: 28px; text-align: center; }
 
 td.university { font-weight: 650; }
-.summary {
-  max-width: 340px;
-  color: #3d4652;
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
+.summary { color: #3d4652; }
 
 .num { text-align: center; font-variant-numeric: tabular-nums; }
 
-.followup { margin-top: 18px; }
+.followup { margin-top: 0; }
 .followup h2, .followup h3 {
   margin: 0 0 8px;
   font-family: Georgia, serif;

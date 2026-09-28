@@ -332,6 +332,17 @@ function downloadFollowups() {
   URL.revokeObjectURL(link.href);
 }
 
+document.querySelector(".tabs").addEventListener("click", (event) => {
+  const button = event.target.closest("[data-view]");
+  if (!button) return;
+  const view = button.dataset.view;
+  for (const tab of document.querySelectorAll(".tab")) {
+    tab.classList.toggle("is-active", tab === button);
+  }
+  document.querySelector("#view-replies").hidden = view !== "replies";
+  document.querySelector("#view-bulk").hidden = view !== "bulk";
+});
+
 fetchButton.addEventListener("click", fetchEmails);
 exportButton.addEventListener("click", downloadExcel);
 followupSubject.addEventListener("input", () => result && renderFollowup());
