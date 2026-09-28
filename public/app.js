@@ -43,14 +43,14 @@ function render() {
     return countryOk && statusOk;
   });
   document.querySelector("#count-total").textContent = String(result.counts.total);
-  document.querySelector("#count-replied").textContent = String(result.counts.replied);
+  document.querySelector("#count-replied").textContent = String(result.counts.gereageerd);
   document.querySelector("#count-none").textContent = String(result.counts.none);
   document.querySelector("#count-other").textContent = String(result.counts.auto + result.counts.bounced);
   stats.hidden = false;
   filters.hidden = false;
   tableWrap.hidden = false;
   exportButton.disabled = false;
-  hint.textContent = `${result.counts.tabs} tabs, ${result.counts.total} contacts. Gmail checked ${result.checkedAt} in ${result.mailbox}. Gereageerd? is TRUE only when a person replied.`;
+  hint.textContent = `${result.counts.tabs} tabs, ${result.counts.total} contacts. Gereageerd? is TRUE only when their reply is the latest message. If we emailed again, it is FALSE.`;
   tbody.replaceChildren(
     ...rows.map((row) => {
       const tr = document.createElement("tr");

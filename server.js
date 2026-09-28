@@ -101,7 +101,8 @@ function buildWorkbook(result) {
     { Metric: "Gmail checked", Value: result.checkedAt },
     { Metric: "Tabs", Value: result.counts.tabs },
     { Metric: "Contacts", Value: result.counts.total },
-    { Metric: "Replied", Value: result.counts.replied },
+    { Metric: "Gereageerd", Value: result.counts.gereageerd },
+    { Metric: "Replied at some point", Value: result.counts.replied },
     { Metric: "No reply", Value: result.counts.none },
     { Metric: "Auto-reply only", Value: result.counts.auto },
     { Metric: "Bounced", Value: result.counts.bounced },
@@ -110,7 +111,7 @@ function buildWorkbook(result) {
     const rows = result.rows.filter((row) => row.country === country);
     summaryRows.push({
       Metric: country,
-      Value: `${rows.filter((row) => row.status === "replied").length} replied / ${rows.length}`,
+      Value: `${rows.filter((row) => row.gereageerd === "TRUE").length} gereageerd / ${rows.length}`,
     });
   }
   const summary = XLSX.utils.json_to_sheet(summaryRows);
