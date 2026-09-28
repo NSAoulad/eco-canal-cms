@@ -38,6 +38,38 @@ function fillCountries() {
   countrySelect.value = activeCountry;
 }
 
+function portalHref(value) {
+  const raw = String(value || "").trim();
+  if (/^https?:\/\//i.test(raw)) return raw;
+  if (/^[\w.-]+\.[a-z]{2,}([/?#].*)?$/i.test(raw)) return `https://${raw}`;
+  return "";
+}
+
+function linkLabel(href) {
+  try {
+    const host = new URL(href).hostname.replace(/^www\./, "");
+    return host.length > 26 ? `${host.slice(0, 24)}…` : host;
+  } catch {
+    return "Link";
+  }
+}
+
+function rowLinks(row) {
+  const seen = new Set();
+  const links = [];
+  const add = (value) => {
+    const href = portalHref(value);
+    if (!href) return;
+    const key = href.replace(/\/+$/, "").toLowerCase();
+    if (seen.has(key)) return;
+    seen.add(key);
+    links.push({ href, label: linkLabel(href) });
+  };
+  for (const link of row.emailLinks || []) add(link);
+  add(row.careerPortal);
+  return links.slice(0, 3);
+}
+
 function visibleRows() {
   const query = searchText.trim().toLowerCase();
   return result.rows.filter((row) => {
@@ -73,6 +105,7 @@ function render() {
         <td></td>
         <td class="university"></td>
         <td></td>
+        <td></td>
         <td><span class="phase-pill"></span></td>
         <td><span class="yesno"></span></td>
         <td class="num"><span class="count-pill"></span></td>
@@ -84,26 +117,36 @@ function render() {
       const cells = tr.children;
       cells[0].textContent = row.country;
       cells[1].textContent = row.university;
-      cells[2].textContent = row.email;
-      const phase = cells[3].querySelector("span");
+      for (const link of rowLinks(row)) {
+        const portal = document.createElement("a");
+        portal.className = "portal";
+        portal.href = link.href;
+        portal.target = "_blank";
+        portal.rel = "noopener noreferrer";
+        portal.textContent = link.label;
+        portal.title = link.href;
+        cells[2].appendChild(portal);
+      }
+      cells[3].textContent = row.email;
+      const phase = cells[4].querySelector("span");
       phase.textContent = row.phaseLabel;
       phase.classList.add(row.phase);
-      const replied = cells[4].querySelector("span");
+      const replied = cells[5].querySelector("span");
       replied.textContent = row.theyReplied ? "Yes" : "No";
       replied.classList.add(row.theyReplied ? "yesno-yes" : "yesno-no");
-      cells[5].querySelector("span").textContent = String(row.sent);
-      cells[6].querySelector("span").textContent = String(row.replied);
-      cells[7].textContent = row.replyFrom;
-      cells[8].textContent = row.replyDate;
-      cells[9].textContent = row.summary;
-      cells[9].title = row.summary;
+      cells[6].querySelector("span").textContent = String(row.sent);
+      cells[7].querySelector("span").textContent = String(row.replied);
+      cells[8].textContent = row.replyFrom;
+      cells[9].textContent = row.replyDate;
+      cells[10].textContent = row.summary;
+      cells[10].title = row.summary;
       return tr;
     })
   );
   if (!rows.length) {
     const tr = document.createElement("tr");
     const td = document.createElement("td");
-    td.colSpan = 10;
+    td.colSpan = 11;
     td.textContent = "Nothing matches this phase.";
     tr.appendChild(td);
     tbody.replaceChildren(tr);
