@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>University reply check</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <header class="top">
+      <div>
+        <p class="eyebrow">Eco Boats · Canal Motorboats</p>
+        <h1>University reply check</h1>
+        <p class="lede" id="lede">
+          Load every tab’s Emailcontact column, match it to Gmail, and download an Excel file with Gereageerd? filled in.
+        </p>
+      </div>
+    </header>
+
+    <section class="panel" aria-label="Fetch contacts">
+      <label for="sheet-url">Google Sheet link</label>
+      <div class="fetch-row">
+        <input id="sheet-url" type="url" spellcheck="false" />
+        <button id="fetch" type="button">Fetch emails</button>
+        <button id="export" type="button" disabled>Download Excel</button>
+      </div>
+      <p class="hint" id="hint"></p>
+      <p class="error" id="error" hidden></p>
+    </section>
+
+    <section class="stats" id="stats" hidden>
+      <article><strong id="count-total">0</strong><span>Contacts</span></article>
+      <article><strong id="count-replied">0</strong><span>Replied</span></article>
+      <article><strong id="count-none">0</strong><span>No reply</span></article>
+      <article><strong id="count-other">0</strong><span>Auto-reply or bounce</span></article>
+    </section>
+
+    <div class="filters" id="filters" hidden>
+      <label class="country-label" for="country">Tab</label>
+      <select id="country"></select>
+      <button type="button" class="filter is-active" data-filter="all">All</button>
+      <button type="button" class="filter" data-filter="replied">Replied</button>
+      <button type="button" class="filter" data-filter="none">No reply</button>
+      <button type="button" class="filter" data-filter="auto">Auto-reply</button>
+      <button type="button" class="filter" data-filter="bounced">Bounced</button>
+      <button type="button" class="filter" data-filter="not_checked">Not checked</button>
+    </div>
+
+    <div class="table-wrap" id="table-wrap" hidden>
+      <table>
+        <thead>
+          <tr>
+            <th>Tab</th>
+            <th>University</th>
+            <th>Email</th>
+            <th>Gmail</th>
+            <th>Reply from</th>
+            <th>Date</th>
+            <th>Summary</th>
+          </tr>
+        </thead>
+        <tbody id="rows"></tbody>
+      </table>
+    </div>
+
+    <script src="/app.js"></script>
+  </body>
+</html>
