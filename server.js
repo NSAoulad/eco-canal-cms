@@ -9,6 +9,7 @@ const {
   authUrl,
   consumeAuthState,
   createAuthState,
+  createDrafts,
   exchangeCode,
   finishMailbox,
   gmailStatus,
@@ -264,6 +265,38 @@ const server = http.createServer(async (req, res) => {
         ],
       });
       res.end();
+      return;
+    }
+    if (req.method === "POST" && url.pathname === "/api/drafts") {
+      const callback = gmailCallbackUrl(req);
+      const status = gmailStatus(callback, cookieValue(req, "gmail_refresh"));
+      if (!status.configured) {
+        sendJson(res, 400, { error: setupError(callback) });
+        return;
+      }
+      if (!status.connected) {
+        sendJson(res, 400, { error: "Connect Gmail before creating drafts.", reconnect: true });
+        return;
+      }
+      const body = JSON.parse((await readBody(req)) || "{}");
+      const messages = (Array.isArray(body.messages) ? body.messages : [])
+        .filter((message) => message && typeof message.to === "string" && message.to.includes("@"))
+        .slice(0, 10)
+        .map((message) => ({
+          to: String(message.to).trim(),
+          subject: String(message.subject || ""),
+          body: String(message.body || ""),
+        }));
+      if (messages.some((message) => message.body.includes("{university}") || message.subject.includes("{university}"))) {
+        sendJson(res, 400, { error: "A university name was still missing from one email." });
+        return;
+      }
+      try {
+        const created = await createDrafts(cookieValue(req, "gmail_refresh"), messages);
+        sendJson(res, 200, created);
+      } catch (error) {
+        sendJson(res, error.reconnect ? 403 : 500, { error: error.message, reconnect: Boolean(error.reconnect) });
+      }
       return;
     }
     if (req.method === "POST" && url.pathname === "/api/sync") {

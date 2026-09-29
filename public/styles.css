@@ -340,7 +340,6 @@ td.university { font-weight: 650; }
 #followup-subject { height: 40px; padding: 0 12px; }
 #followup-body { padding: 12px; resize: vertical; }
 #followup-drafts { background: var(--teal); color: #fff; }
-#followup-download { background: #efe8dc; color: var(--ink); }
 .audience {
   margin: 12px 0 0;
   padding: 10px 12px;

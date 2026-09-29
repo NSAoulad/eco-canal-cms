@@ -134,15 +134,14 @@
       </div>
       <label for="followup-body">Email</label>
       <textarea id="followup-body" rows="14"></textarea>
-      <p class="hint">Each address gets its own email. <code>{university}</code> is replaced with that row’s university name.</p>
+      <p class="hint">Each address becomes its own draft in marketing@ecoboatsamsterdam.com. <code>{university}</code> is replaced with that row’s university name. Nothing is sent until you send the drafts from Gmail.</p>
       <div class="fetch-row">
-        <button id="followup-drafts" type="button">Prepare emails</button>
-        <button id="followup-download" type="button">Download mail merge</button>
+        <button id="followup-drafts" type="button">Create Gmail drafts</button>
       </div>
       <div class="confirm" id="send-confirm" hidden>
         <p id="send-confirm-text"></p>
         <div class="fetch-row">
-          <button id="send-confirm-yes" type="button">Prepare these emails</button>
+          <button id="send-confirm-yes" type="button">Create these drafts</button>
           <button id="send-confirm-no" type="button">Cancel</button>
         </div>
       </div>

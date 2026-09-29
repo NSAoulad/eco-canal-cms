@@ -387,7 +387,6 @@ const followupCount = document.querySelector("#followup-count");
 const followupSubject = document.querySelector("#followup-subject");
 const followupBody = document.querySelector("#followup-body");
 const followupPreview = document.querySelector("#followup-preview");
-const followupDownload = document.querySelector("#followup-download");
 const followupDrafts = document.querySelector("#followup-drafts");
 const followupStatus = document.querySelector("#followup-status");
 const sendConfirm = document.querySelector("#send-confirm");
@@ -475,61 +474,53 @@ function askForDrafts() {
   }
   const sample = rows[previewIndex] || rows[0];
   sendConfirm.hidden = false;
-  sendConfirmText.textContent = `Prepare ${rows.length} emails for marketing@ecoboatsamsterdam.com. The first one starts “Dear ${sample.university}”. Nothing is sent.`;
+  sendConfirmText.textContent = `Create ${rows.length} drafts in marketing@ecoboatsamsterdam.com. The first one starts “Dear ${sample.university}”. Nothing is sent until you send them from Gmail.`;
 }
 
 async function createDrafts() {
   const rows = noReplyRows();
   sendConfirm.hidden = true;
   followupDrafts.disabled = true;
-  followupStatus.textContent = `Saving ${rows.length} personalized emails…`;
+  if (gmailStatus?.configured && !gmailStatus.connected) {
+    window.location.href = "/api/gmail/auth";
+    return;
+  }
+  followupStatus.textContent = `Creating ${rows.length} Gmail drafts…`;
   try {
     const messages = rows.map((row) => ({
       to: row.email,
-      university: row.university,
-      country: row.country,
       subject: fillTemplate(followupSubject.value, row.university),
       body: fillTemplate(followupBody.value, row.university),
     }));
-    const response = await fetch("/api/outbox", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ messages }),
-    });
-    const body = await response.json();
-    if (!response.ok) throw new Error(body.error || "Could not save the emails.");
-    followupStatus.textContent = `Prepared ${body.saved} emails. {university} is already replaced with each university name. Nothing has been sent.`;
+    let created = 0;
+    for (let index = 0; index < messages.length; ) {
+      const response = await fetch("/api/drafts", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ messages: messages.slice(index, index + 10) }),
+      });
+      const body = await response.json();
+      if (body.reconnect) {
+        window.location.href = "/api/gmail/auth";
+        return;
+      }
+      if (!response.ok) throw new Error(body.error || "Could not create the Gmail drafts.");
+      created += body.created || 0;
+      index += body.created || 0;
+      if (body.retryAfter) {
+        followupStatus.textContent = `Gmail limit reached. Waiting ${body.retryAfter}s…`;
+        await new Promise((resolve) => setTimeout(resolve, body.retryAfter * 1000));
+        continue;
+      }
+      followupStatus.textContent = `Creating Gmail drafts… ${created} of ${messages.length}`;
+      if (!body.created) throw new Error("Gmail did not create a draft.");
+    }
+    followupStatus.textContent = `Created ${created} drafts in marketing@ecoboatsamsterdam.com. Open Gmail drafts to send them.`;
   } catch (error) {
     followupStatus.textContent = error.message;
   } finally {
     followupDrafts.disabled = false;
   }
-}
-
-function csvCell(value) {
-  const text = String(value ?? "");
-  if (/[",\n]/.test(text)) return `"${text.replaceAll('"', '""')}"`;
-  return text;
-}
-
-function downloadFollowups() {
-  const rows = noReplyRows();
-  const lines = [["Tab", "University", "Email", "Emails sent", "Subject", "Body"].join(",")];
-  for (const row of rows) {
-    lines.push(
-      [row.country, row.university, row.email, row.sent, fillTemplate(followupSubject.value, row.university), fillTemplate(followupBody.value, row.university)]
-        .map(csvCell)
-        .join(",")
-    );
-  }
-  const blob = new Blob(["\uFEFF" + lines.join("\r\n")], { type: "text/csv;charset=utf-8" });
-  const link = document.createElement("a");
-  link.href = URL.createObjectURL(blob);
-  link.download = "no-reply-follow-ups.csv";
-  document.body.appendChild(link);
-  link.click();
-  link.remove();
-  URL.revokeObjectURL(link.href);
 }
 
 document.querySelector(".tabs").addEventListener("click", (event) => {
@@ -563,7 +554,6 @@ document.querySelector("#preview-next").addEventListener("click", () => {
   previewIndex = (previewIndex + 1) % rows.length;
   renderFollowup();
 });
-followupDownload.addEventListener("click", downloadFollowups);
 followupDrafts.addEventListener("click", askForDrafts);
 document.querySelector("#send-confirm-yes").addEventListener("click", createDrafts);
 document.querySelector("#send-confirm-no").addEventListener("click", () => {
