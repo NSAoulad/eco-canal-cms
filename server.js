@@ -12,6 +12,7 @@ const {
   exchangeCode,
   finishMailbox,
   gmailStatus,
+  listChanges,
   loadMailbox,
   setupError,
   syncChunk,
@@ -273,8 +274,13 @@ const server = http.createServer(async (req, res) => {
       }
       const body = JSON.parse((await readBody(req)) || "{}");
       const refreshToken = cookieValue(req, "gmail_refresh");
+      if (body.historyId && !body.finish && !Array.isArray(body.ids)) {
+        const changes = await listChanges(refreshToken, body.historyId);
+        sendJson(res, 200, changes);
+        return;
+      }
       if (body.finish) {
-        const mailbox = finishMailbox(body.threads);
+        const mailbox = finishMailbox(body.threads, body.historyId);
         const buffer = await getBuffer(toXlsxUrl(body.sheetUrl || DEFAULT_SHEET_URL));
         if (buffer.slice(0, 2).toString() !== "PK") {
           throw new Error("Google Sheets did not return the workbook. It may be private.");

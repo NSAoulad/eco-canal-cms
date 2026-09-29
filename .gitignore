@@ -4,4 +4,5 @@ node_modules/
 data/outbox.json
 data/gmail-pages/
 data/gmail-token.json
+data/gmail-state.json
 

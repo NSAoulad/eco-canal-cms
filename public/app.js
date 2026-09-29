@@ -186,9 +186,90 @@ async function fetchEmails() {
   }
 }
 
+const SYNC_KEY = "eco-gmail-sync";
+
 function syncLabel() {
   if (gmailStatus?.configured && !gmailStatus.connected) return "Connect Gmail";
   return "Sync Gmail";
+}
+
+function readSyncCache() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(SYNC_KEY) || "null");
+    if (!saved || !saved.historyId || !Array.isArray(saved.threads)) return null;
+    return saved;
+  } catch {
+    return null;
+  }
+}
+
+function writeSyncCache(historyId, threads) {
+  if (!historyId) return;
+  try {
+    localStorage.setItem(SYNC_KEY, JSON.stringify({ historyId, threads }));
+  } catch {
+    localStorage.removeItem(SYNC_KEY);
+  }
+}
+
+function applyThreadUpdates(existing, updates) {
+  const byId = new Map(existing.map((thread) => [thread.id, thread]));
+  for (const thread of updates || []) {
+    if (!thread || !thread.id) continue;
+    if (thread.removed) byId.delete(thread.id);
+    else byId.set(thread.id, thread);
+  }
+  return [...byId.values()];
+}
+
+async function pullThreads(ids) {
+  let offset = 0;
+  let knownIds = ids;
+  let historyId = "";
+  const threads = [];
+  let total = ids ? ids.length : 0;
+  while (true) {
+    const started = Date.now();
+    const response = await fetch("/api/sync", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ offset, ids: knownIds }),
+    });
+    const body = await response.json();
+    if (!response.ok) throw new Error(body.error || "Could not sync Gmail.");
+    if (!knownIds) knownIds = body.ids;
+    if (body.historyId) historyId = body.historyId;
+    total = body.total || total;
+    threads.push(...(body.threads || []));
+    offset = body.next;
+    syncButton.textContent = `Syncing Gmail… ${Math.min(offset, total)} of ${total}`;
+    if (body.retryAfter) {
+      syncButton.textContent = `Gmail limit reached. Waiting ${body.retryAfter}s…`;
+      await new Promise((resolve) => setTimeout(resolve, body.retryAfter * 1000));
+      continue;
+    }
+    if (body.done) break;
+    const wait = 5000 - (Date.now() - started);
+    if (wait > 0) await new Promise((resolve) => setTimeout(resolve, wait));
+  }
+  return { threads, historyId };
+}
+
+async function finishSync(threads, historyId) {
+  const response = await fetch("/api/sync", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ finish: true, threads, historyId, sheetUrl: sheetInput.value.trim() }),
+  });
+  const body = await response.json();
+  if (!response.ok) throw new Error(body.error || "Could not sync Gmail.");
+  if (!body.result) throw new Error(body.error || "Gmail synced, but the sheet could not be loaded.");
+  writeSyncCache(historyId, threads.filter((thread) => thread && !thread.removed));
+  result = body.result;
+  fillCountries();
+  render();
+  renderFollowup();
+  await refreshGmailStatus();
 }
 
 async function refreshGmailStatus() {
@@ -206,46 +287,26 @@ async function syncGmail() {
   syncButton.disabled = true;
   syncButton.textContent = "Syncing Gmail…";
   try {
-    let ids = null;
-    let offset = 0;
-    const threads = [];
-    let total = 0;
-    while (true) {
-      const started = Date.now();
+    const saved = readSyncCache();
+    if (saved) {
+      syncButton.textContent = "Checking for new mail…";
       const response = await fetch("/api/sync", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ offset, ids }),
+        body: JSON.stringify({ historyId: saved.historyId }),
       });
-      const body = await response.json();
-      if (!response.ok) throw new Error(body.error || "Could not sync Gmail.");
-      if (!ids) ids = body.ids;
-      total = body.total || total;
-      threads.push(...(body.threads || []));
-      offset = body.next;
-      syncButton.textContent = `Syncing Gmail… ${Math.min(offset, total)} of ${total}`;
-      if (body.retryAfter) {
-        syncButton.textContent = `Gmail limit reached. Waiting ${body.retryAfter}s…`;
-        await new Promise((resolve) => setTimeout(resolve, body.retryAfter * 1000));
-        continue;
+      const changes = await response.json();
+      if (!response.ok) throw new Error(changes.error || "Could not sync Gmail.");
+      if (!changes.expired) {
+        const updates = changes.ids?.length ? await pullThreads(changes.ids) : { threads: [] };
+        const threads = applyThreadUpdates(saved.threads, updates.threads);
+        syncButton.textContent = changes.ids?.length ? `Saving ${changes.ids.length} updated threads…` : "No new mail";
+        await finishSync(threads, changes.historyId);
+        return;
       }
-      if (body.done) break;
-      const wait = 5000 - (Date.now() - started);
-      if (wait > 0) await new Promise((resolve) => setTimeout(resolve, wait));
     }
-    const response = await fetch("/api/sync", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ finish: true, threads, sheetUrl: sheetInput.value.trim() }),
-    });
-    const body = await response.json();
-    if (!response.ok) throw new Error(body.error || "Could not sync Gmail.");
-    if (!body.result) throw new Error(body.error || "Gmail synced, but the sheet could not be loaded.");
-    result = body.result;
-    fillCountries();
-    render();
-    renderFollowup();
-    await refreshGmailStatus();
+    const full = await pullThreads(null);
+    await finishSync(full.threads, full.historyId);
   } catch (error) {
     setError(error.message);
   } finally {
