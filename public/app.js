@@ -255,11 +255,11 @@ async function pullThreads(ids) {
   return { threads, historyId };
 }
 
-async function finishSync(threads, historyId) {
+async function finishSync(threads, historyId, options = {}) {
   const response = await fetch("/api/sync", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ finish: true, threads, historyId, sheetUrl: sheetInput.value.trim() }),
+    body: JSON.stringify({ finish: true, full: Boolean(options.full), threads, historyId, sheetUrl: sheetInput.value.trim() }),
   });
   const body = await response.json();
   if (!response.ok) throw new Error(body.error || "Could not sync Gmail.");
@@ -288,6 +288,24 @@ async function syncGmail() {
   syncButton.textContent = "Syncing Gmail…";
   try {
     const saved = readSyncCache();
+    const probe = await fetch("/api/sync", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ incremental: true }),
+    });
+    const mode = await probe.json();
+    if (!probe.ok) throw new Error(mode.error || "Could not sync Gmail.");
+    if (!mode.full && (saved || mode.historyId)) {
+      syncButton.textContent = "Checking for new mail…";
+      if (!mode.expired) {
+        const updates = mode.ids?.length ? await pullThreads(mode.ids) : { threads: [] };
+        const base = saved?.threads || [];
+        const threads = applyThreadUpdates(base, updates.threads);
+        syncButton.textContent = mode.ids?.length ? `Saving ${mode.ids.length} updated threads…` : "No new mail";
+        await finishSync(threads, mode.historyId);
+        return;
+      }
+    }
     if (saved) {
       syncButton.textContent = "Checking for new mail…";
       const response = await fetch("/api/sync", {
@@ -306,7 +324,7 @@ async function syncGmail() {
       }
     }
     const full = await pullThreads(null);
-    await finishSync(full.threads, full.historyId);
+    await finishSync(full.threads, full.historyId, { full: true });
   } catch (error) {
     setError(error.message);
   } finally {

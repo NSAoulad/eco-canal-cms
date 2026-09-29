@@ -13,10 +13,10 @@ const {
   finishMailbox,
   gmailStatus,
   listChanges,
-  loadMailbox,
   setupError,
   syncChunk,
 } = require("./lib/gmail");
+const db = require("./lib/db");
 
 function loadEnv() {
   const file = path.join(__dirname, ".env");
@@ -132,7 +132,7 @@ async function fetchSheet(sheetUrl) {
   if (buffer.slice(0, 2).toString() !== "PK") {
     throw new Error("Google Sheets did not return the workbook. It may be private.");
   }
-  const mailbox = loadMailbox();
+  const mailbox = await db.loadMailbox();
   return matchWorkbook(buffer, mailbox.replyFile, mailbox.conversations, mailbox.emailLinks);
 }
 
@@ -221,7 +221,12 @@ const server = http.createServer(async (req, res) => {
     }
     if (req.method === "GET" && url.pathname === "/api/gmail/status") {
       const callback = gmailCallbackUrl(req);
-      sendJson(res, 200, gmailStatus(callback, cookieValue(req, "gmail_refresh")));
+      const status = gmailStatus(callback, cookieValue(req, "gmail_refresh"));
+      if (db.enabled()) {
+        const state = await db.getState();
+        if (state?.checked_at) status.checkedAt = state.checked_at;
+      }
+      sendJson(res, 200, status);
       return;
     }
     if (req.method === "GET" && url.pathname === "/api/gmail/auth") {
@@ -274,13 +279,23 @@ const server = http.createServer(async (req, res) => {
       }
       const body = JSON.parse((await readBody(req)) || "{}");
       const refreshToken = cookieValue(req, "gmail_refresh");
+      if (body.incremental) {
+        const state = db.enabled() ? await db.getState() : null;
+        if (!state?.history_id) {
+          sendJson(res, 200, { full: true });
+          return;
+        }
+        const changes = await listChanges(refreshToken, state.history_id);
+        sendJson(res, 200, changes.expired ? { full: true } : changes);
+        return;
+      }
       if (body.historyId && !body.finish && !Array.isArray(body.ids)) {
         const changes = await listChanges(refreshToken, body.historyId);
         sendJson(res, 200, changes);
         return;
       }
       if (body.finish) {
-        const mailbox = finishMailbox(body.threads, body.historyId);
+        const mailbox = await finishMailbox(body.threads, body.historyId, { full: Boolean(body.full) });
         const buffer = await getBuffer(toXlsxUrl(body.sheetUrl || DEFAULT_SHEET_URL));
         if (buffer.slice(0, 2).toString() !== "PK") {
           throw new Error("Google Sheets did not return the workbook. It may be private.");
@@ -341,11 +356,16 @@ const server = http.createServer(async (req, res) => {
         sendJson(res, 400, { error: "A university name was still missing from one email." });
         return;
       }
+      if (db.enabled()) await db.saveOutbox(saved);
       const file = path.join(__dirname, "data", "outbox.json");
-      fs.writeFileSync(
-        file,
-        JSON.stringify({ savedAt: new Date().toISOString(), mailbox: "marketing@ecoboatsamsterdam.com", messages: saved }, null, 2)
-      );
+      try {
+        fs.writeFileSync(
+          file,
+          JSON.stringify({ savedAt: new Date().toISOString(), mailbox: "marketing@ecoboatsamsterdam.com", messages: saved }, null, 2)
+        );
+      } catch {
+        if (!db.enabled()) throw new Error("Could not save the prepared emails.");
+      }
       sendJson(res, 200, { saved: saved.length });
       return;
     }
