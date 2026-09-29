@@ -309,18 +309,15 @@ async function syncGmail() {
     });
     const mode = await probe.json();
     if (!probe.ok) throw new Error(mode.error || "Could not sync Gmail.");
-    if (!mode.full && (saved || mode.historyId)) {
+    if (mode.historyId && !mode.catchup && !mode.expired) {
       syncButton.textContent = "Checking for new mail…";
-      if (!mode.expired) {
-        const updates = mode.ids?.length ? await pullThreads(mode.ids) : { threads: [] };
-        const base = saved?.threads || [];
-        const threads = applyThreadUpdates(base, updates.threads);
-        syncButton.textContent = mode.ids?.length ? `Saving ${mode.ids.length} updated threads…` : "No new mail";
-        await finishSync(threads, mode.historyId);
-        return;
-      }
+      const updates = mode.ids?.length ? await pullThreads(mode.ids) : { threads: [] };
+      const threads = applyThreadUpdates(saved?.threads || [], updates.threads);
+      syncButton.textContent = mode.ids?.length ? `Saving ${mode.ids.length} new threads…` : "No new mail";
+      await finishSync(threads, mode.historyId);
+      return;
     }
-    if (saved) {
+    if (saved && !mode.catchup) {
       syncButton.textContent = "Checking for new mail…";
       const response = await fetch("/api/sync", {
         method: "POST",
@@ -332,13 +329,22 @@ async function syncGmail() {
       if (!changes.expired) {
         const updates = changes.ids?.length ? await pullThreads(changes.ids) : { threads: [] };
         const threads = applyThreadUpdates(saved.threads, updates.threads);
-        syncButton.textContent = changes.ids?.length ? `Saving ${changes.ids.length} updated threads…` : "No new mail";
+        syncButton.textContent = changes.ids?.length ? `Saving ${changes.ids.length} new threads…` : "No new mail";
         await finishSync(threads, changes.historyId);
         return;
       }
     }
-    const full = await pullThreads(null);
-    await finishSync(full.threads, full.historyId, { full: true });
+    syncButton.textContent = "Checking for new mail…";
+    const response = await fetch("/api/sync", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ catchup: true }),
+    });
+    const recent = await response.json();
+    if (!response.ok) throw new Error(recent.error || "Could not sync Gmail.");
+    const updates = recent.ids?.length ? await pullThreads(recent.ids) : { threads: [] };
+    syncButton.textContent = recent.ids?.length ? `Saving ${recent.ids.length} new threads…` : "No new mail";
+    await finishSync(updates.threads, recent.historyId);
   } catch (error) {
     setError(error.message);
   } finally {

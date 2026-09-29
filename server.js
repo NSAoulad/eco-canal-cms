@@ -16,6 +16,7 @@ const {
   contactThreadIds,
   threadForEmail,
   listChanges,
+  listRecent,
   setupError,
   syncChunk,
 } = require("./lib/gmail");
@@ -349,12 +350,21 @@ const server = http.createServer(async (req, res) => {
       const refreshToken = cookieValue(req, "gmail_refresh");
       if (body.incremental) {
         const state = db.enabled() ? await db.getState() : null;
-        if (!state?.history_id) {
-          sendJson(res, 200, { full: true });
-          return;
+        if (state?.history_id) {
+          const changes = await listChanges(refreshToken, state.history_id);
+          if (!changes.expired) {
+            sendJson(res, 200, changes);
+            return;
+          }
         }
-        const changes = await listChanges(refreshToken, state.history_id);
-        sendJson(res, 200, changes.expired ? { full: true } : changes);
+        sendJson(res, 200, { catchup: true });
+        return;
+      }
+      if (body.catchup) {
+        const state = db.enabled() ? await db.getState() : null;
+        const loaded = await db.loadMailbox();
+        const since = state?.checked_at || loaded.replyFile?.checkedAt || "";
+        sendJson(res, 200, await listRecent(refreshToken, since));
         return;
       }
       if (body.historyId && !body.finish && !Array.isArray(body.ids)) {
@@ -364,7 +374,7 @@ const server = http.createServer(async (req, res) => {
       }
       if (body.finish) {
         threadIdsCache = null;
-        const mailbox = await finishMailbox(body.threads, body.historyId, { full: Boolean(body.full) });
+        const mailbox = await finishMailbox(body.threads, body.historyId);
         const buffer = await getBuffer(toXlsxUrl(body.sheetUrl || DEFAULT_SHEET_URL));
         if (buffer.slice(0, 2).toString() !== "PK") {
           throw new Error("Google Sheets did not return the workbook. It may be private.");
