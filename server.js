@@ -13,6 +13,8 @@ const {
   exchangeCode,
   finishMailbox,
   gmailStatus,
+  contactThreadIds,
+  latestThreadId,
   listChanges,
   setupError,
   syncChunk,
@@ -128,13 +130,31 @@ function getBuffer(target, redirectsLeft = 5) {
   });
 }
 
+let threadIdsCache = null;
+
+async function conversationsWithThreads(conversations) {
+  const merged = { ...(conversations || {}) };
+  if (!db.enabled()) return merged;
+  try {
+    if (!threadIdsCache) threadIdsCache = contactThreadIds(await db.listThreads());
+  } catch {
+    return merged;
+  }
+  for (const [email, threadId] of Object.entries(threadIdsCache)) {
+    if (merged[email]?.threadId) continue;
+    merged[email] = { ...(merged[email] || { sent: 0, replied: 0 }), threadId };
+  }
+  return merged;
+}
+
 async function fetchSheet(sheetUrl) {
   const buffer = await getBuffer(toXlsxUrl(sheetUrl));
   if (buffer.slice(0, 2).toString() !== "PK") {
     throw new Error("Google Sheets did not return the workbook. It may be private.");
   }
   const mailbox = await db.loadMailbox();
-  return matchWorkbook(buffer, mailbox.replyFile, mailbox.conversations, mailbox.emailLinks);
+  const conversations = await conversationsWithThreads(mailbox.conversations);
+  return matchWorkbook(buffer, mailbox.replyFile, conversations, mailbox.emailLinks);
 }
 
 const COLUMN_WIDTHS = [
@@ -218,6 +238,33 @@ const server = http.createServer(async (req, res) => {
     const url = new URL(req.url, `http://${req.headers.host}`);
     if (req.method === "GET" && url.pathname === "/api/defaults") {
       sendJson(res, 200, { sheetUrl: DEFAULT_SHEET_URL });
+      return;
+    }
+    if (req.method === "GET" && url.pathname === "/api/gmail/thread") {
+      const email = String(url.searchParams.get("email") || "").trim().toLowerCase();
+      if (!/^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/.test(email)) {
+        sendHtml(res, 400, "<p>That contact does not have a usable email address.</p>");
+        return;
+      }
+      const account = encodeURIComponent(MAILBOX);
+      const search = `https://mail.google.com/mail/?authuser=${account}#search/${encodeURIComponent(`in:anywhere (from:${email} OR to:${email})`)}`;
+      const refreshToken = cookieValue(req, "gmail_refresh");
+      if (!gmailStatus(gmailCallbackUrl(req), refreshToken).connected) {
+        res.writeHead(302, { Location: search });
+        res.end();
+        return;
+      }
+      let threadId = "";
+      try {
+        threadId = await latestThreadId(refreshToken, email);
+      } catch {
+        threadId = "";
+      }
+      const location = threadId
+        ? `https://mail.google.com/mail/?authuser=${account}#all/${encodeURIComponent(threadId)}`
+        : search;
+      res.writeHead(302, { Location: location });
+      res.end();
       return;
     }
     if (req.method === "GET" && url.pathname === "/api/gmail/status") {
@@ -328,6 +375,7 @@ const server = http.createServer(async (req, res) => {
         return;
       }
       if (body.finish) {
+        threadIdsCache = null;
         const mailbox = await finishMailbox(body.threads, body.historyId, { full: Boolean(body.full) });
         const buffer = await getBuffer(toXlsxUrl(body.sheetUrl || DEFAULT_SHEET_URL));
         if (buffer.slice(0, 2).toString() !== "PK") {

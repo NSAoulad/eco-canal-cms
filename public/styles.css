@@ -317,6 +317,15 @@ tr:last-child td { border-bottom: 0; }
 .count-pill { background: #f7f3ec; color: var(--ink); min-width: 28px; text-align: center; }
 
 td.university { font-weight: 650; }
+
+a.university-link {
+  color: var(--teal);
+  font-weight: 650;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+
+a.university-link:hover { color: var(--teal-dark); }
 .summary { color: #3d4652; }
 
 .num { text-align: center; font-variant-numeric: tabular-nums; }

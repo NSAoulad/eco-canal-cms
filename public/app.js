@@ -56,6 +56,15 @@ function linkLabel(href) {
   }
 }
 
+function gmailHref(row) {
+  const mailbox = encodeURIComponent(result.mailbox || "marketing@ecoboatsamsterdam.com");
+  if (row.threadId) return `https://mail.google.com/mail/?authuser=${mailbox}#all/${encodeURIComponent(row.threadId)}`;
+  if ((row.sent || 0) > 0 || (row.replied || 0) > 0) {
+    return `/api/gmail/thread?email=${encodeURIComponent(row.email)}`;
+  }
+  return "";
+}
+
 function rowLinks(row) {
   const seen = new Set();
   const links = [];
@@ -106,7 +115,7 @@ function render() {
   const source = String(result.checkedAt || "").includes("T")
     ? `Gmail synced ${checkedLabel}.`
     : `Mailbox snapshot ${checkedLabel}. Use Sync Gmail to refresh it.`;
-  hint.textContent = `${source} Replied means they wrote back at least once. We sent and They sent are the emails in that thread.`;
+  hint.textContent = `${source} Replied means they wrote back at least once. We sent and They sent are the emails in that thread. Click a university to open it in Gmail.`;
   tbody.replaceChildren(
     ...rows.map((row) => {
       const tr = document.createElement("tr");
@@ -125,7 +134,19 @@ function render() {
       `;
       const cells = tr.children;
       cells[0].textContent = row.country;
-      cells[1].textContent = row.university;
+      const threadHref = gmailHref(row);
+      if (threadHref) {
+        const thread = document.createElement("a");
+        thread.className = "university-link";
+        thread.href = threadHref;
+        thread.target = "_blank";
+        thread.rel = "noopener noreferrer";
+        thread.textContent = row.university;
+        thread.title = "Open the email thread in Gmail";
+        cells[1].appendChild(thread);
+      } else {
+        cells[1].textContent = row.university;
+      }
       for (const link of rowLinks(row)) {
         const portal = document.createElement("a");
         portal.className = "portal";
