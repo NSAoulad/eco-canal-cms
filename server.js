@@ -5,14 +5,16 @@ const path = require("path");
 const XLSX = require("xlsx");
 const { DEFAULT_SHEET_URL, toXlsxUrl, matchWorkbook, workbookRows } = require("./lib/sheet");
 const {
+  MAILBOX,
   authUrl,
   consumeAuthState,
   createAuthState,
   exchangeCode,
+  finishMailbox,
   gmailStatus,
   loadMailbox,
   setupError,
-  syncMailbox,
+  syncChunk,
 } = require("./lib/gmail");
 
 function loadEnv() {
@@ -270,24 +272,26 @@ const server = http.createServer(async (req, res) => {
         return;
       }
       const body = JSON.parse((await readBody(req)) || "{}");
-      const synced = await syncMailbox(cookieValue(req, "gmail_refresh"));
-      const summary = {
-        mailbox: synced.mailbox,
-        checkedAt: synced.checkedAt,
-        threads: synced.threads,
-        replies: synced.replies,
-        contacts: synced.contacts,
-      };
-      try {
+      const refreshToken = cookieValue(req, "gmail_refresh");
+      if (body.finish) {
+        const mailbox = finishMailbox(body.threads);
         const buffer = await getBuffer(toXlsxUrl(body.sheetUrl || DEFAULT_SHEET_URL));
         if (buffer.slice(0, 2).toString() !== "PK") {
           throw new Error("Google Sheets did not return the workbook. It may be private.");
         }
-        const result = matchWorkbook(buffer, synced.replyFile, synced.conversations, synced.emailLinks);
-        sendJson(res, 200, { ...summary, result });
-      } catch (error) {
-        sendJson(res, 200, { ...summary, error: error.message || "Gmail synced, but the sheet could not be loaded." });
+        const result = matchWorkbook(buffer, mailbox.replyFile, mailbox.conversations, mailbox.emailLinks);
+        sendJson(res, 200, {
+          mailbox: MAILBOX,
+          checkedAt: mailbox.checkedAt,
+          threads: mailbox.threadCount,
+          replies: mailbox.replyFile.replies.length,
+          contacts: Object.keys(mailbox.conversations).length,
+          result,
+        });
+        return;
       }
+      const chunk = await syncChunk(refreshToken, body.offset, body.ids);
+      sendJson(res, 200, chunk);
       return;
     }
     if (req.method === "POST" && url.pathname === "/api/fetch") {

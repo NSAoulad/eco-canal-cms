@@ -206,10 +206,37 @@ async function syncGmail() {
   syncButton.disabled = true;
   syncButton.textContent = "Syncing Gmail…";
   try {
+    let ids = null;
+    let offset = 0;
+    const threads = [];
+    let total = 0;
+    while (true) {
+      const started = Date.now();
+      const response = await fetch("/api/sync", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ offset, ids }),
+      });
+      const body = await response.json();
+      if (!response.ok) throw new Error(body.error || "Could not sync Gmail.");
+      if (!ids) ids = body.ids;
+      total = body.total || total;
+      threads.push(...(body.threads || []));
+      offset = body.next;
+      syncButton.textContent = `Syncing Gmail… ${Math.min(offset, total)} of ${total}`;
+      if (body.retryAfter) {
+        syncButton.textContent = `Gmail limit reached. Waiting ${body.retryAfter}s…`;
+        await new Promise((resolve) => setTimeout(resolve, body.retryAfter * 1000));
+        continue;
+      }
+      if (body.done) break;
+      const wait = 5000 - (Date.now() - started);
+      if (wait > 0) await new Promise((resolve) => setTimeout(resolve, wait));
+    }
     const response = await fetch("/api/sync", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ sheetUrl: sheetInput.value.trim() }),
+      body: JSON.stringify({ finish: true, threads, sheetUrl: sheetInput.value.trim() }),
     });
     const body = await response.json();
     if (!response.ok) throw new Error(body.error || "Could not sync Gmail.");
