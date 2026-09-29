@@ -14,7 +14,7 @@ const {
   finishMailbox,
   gmailStatus,
   contactThreadIds,
-  latestThreadId,
+  threadForEmail,
   listChanges,
   setupError,
   syncChunk,
@@ -243,28 +243,16 @@ const server = http.createServer(async (req, res) => {
     if (req.method === "GET" && url.pathname === "/api/gmail/thread") {
       const email = String(url.searchParams.get("email") || "").trim().toLowerCase();
       if (!/^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/.test(email)) {
-        sendHtml(res, 400, "<p>That contact does not have a usable email address.</p>");
+        sendJson(res, 400, { error: "That contact does not have a usable email address." });
         return;
       }
-      const account = encodeURIComponent(MAILBOX);
-      const search = `https://mail.google.com/mail/?authuser=${account}#search/${encodeURIComponent(`in:anywhere (from:${email} OR to:${email})`)}`;
       const refreshToken = cookieValue(req, "gmail_refresh");
       if (!gmailStatus(gmailCallbackUrl(req), refreshToken).connected) {
-        res.writeHead(302, { Location: search });
-        res.end();
+        sendJson(res, 400, { error: "Connect Gmail to open this thread." });
         return;
       }
-      let threadId = "";
-      try {
-        threadId = await latestThreadId(refreshToken, email);
-      } catch {
-        threadId = "";
-      }
-      const location = threadId
-        ? `https://mail.google.com/mail/?authuser=${account}#all/${encodeURIComponent(threadId)}`
-        : search;
-      res.writeHead(302, { Location: location });
-      res.end();
+      const thread = await threadForEmail(refreshToken, email);
+      sendJson(res, 200, thread);
       return;
     }
     if (req.method === "GET" && url.pathname === "/api/gmail/status") {

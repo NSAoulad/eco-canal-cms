@@ -318,14 +318,89 @@ tr:last-child td { border-bottom: 0; }
 
 td.university { font-weight: 650; }
 
-a.university-link {
+button.university-link {
+  height: auto;
+  padding: 0;
+  border: 0;
+  background: none;
   color: var(--teal);
+  font: inherit;
   font-weight: 650;
+  text-align: left;
+  text-decoration: underline;
   text-decoration-thickness: 1px;
   text-underline-offset: 3px;
 }
 
-a.university-link:hover { color: var(--teal-dark); }
+button.university-link:hover { color: var(--teal-dark); }
+
+.thread-dialog {
+  width: min(760px, calc(100vw - 32px));
+  max-height: min(84vh, 880px);
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--paper);
+  color: var(--ink);
+}
+
+.thread-dialog::backdrop { background: rgba(28, 36, 48, 0.45); }
+
+.thread-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: flex-start;
+  padding: 18px 18px 0;
+}
+
+.thread-head h2 {
+  margin: 0;
+  font-family: Georgia, "Iowan Old Style", serif;
+  font-size: 26px;
+  font-weight: 600;
+}
+
+.thread-head .hint { margin: 4px 0 0; }
+
+#thread-close {
+  background: transparent;
+  border: 1px solid var(--line);
+  color: var(--ink);
+}
+
+#thread-status { margin: 12px 18px; }
+
+.thread-messages {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: 64vh;
+  overflow: auto;
+  padding: 0 18px 18px;
+}
+
+.thread-message {
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+}
+
+.thread-message.us { margin-left: 12%; background: #e7f3f2; }
+.thread-message.them { margin-right: 12%; background: var(--card); }
+
+.thread-message header {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 6px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.thread-message .who { color: var(--ink); font-weight: 700; }
+.thread-message .subject { margin: 0 0 8px; font-weight: 650; }
+.thread-message .body { margin: 0; white-space: pre-wrap; }
 .summary { color: #3d4652; }
 
 .num { text-align: center; font-variant-numeric: tabular-nums; }

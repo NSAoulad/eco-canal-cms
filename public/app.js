@@ -56,13 +56,8 @@ function linkLabel(href) {
   }
 }
 
-function gmailHref(row) {
-  const mailbox = encodeURIComponent(result.mailbox || "marketing@ecoboatsamsterdam.com");
-  if (row.threadId) return `https://mail.google.com/mail/?authuser=${mailbox}#all/${encodeURIComponent(row.threadId)}`;
-  if ((row.sent || 0) > 0 || (row.replied || 0) > 0) {
-    return `/api/gmail/thread?email=${encodeURIComponent(row.email)}`;
-  }
-  return "";
+function canOpenThread(row) {
+  return (row.sent || 0) > 0 || (row.replied || 0) > 0;
 }
 
 function rowLinks(row) {
@@ -115,7 +110,7 @@ function render() {
   const source = String(result.checkedAt || "").includes("T")
     ? `Gmail synced ${checkedLabel}.`
     : `Mailbox snapshot ${checkedLabel}. Use Sync Gmail to refresh it.`;
-  hint.textContent = `${source} Replied means they wrote back at least once. We sent and They sent are the emails in that thread. Click a university to open it in Gmail.`;
+  hint.textContent = `${source} Replied means they wrote back at least once. We sent and They sent are the emails in that thread. Click a university to read it here.`;
   tbody.replaceChildren(
     ...rows.map((row) => {
       const tr = document.createElement("tr");
@@ -134,15 +129,13 @@ function render() {
       `;
       const cells = tr.children;
       cells[0].textContent = row.country;
-      const threadHref = gmailHref(row);
-      if (threadHref) {
-        const thread = document.createElement("a");
+      if (canOpenThread(row)) {
+        const thread = document.createElement("button");
+        thread.type = "button";
         thread.className = "university-link";
-        thread.href = threadHref;
-        thread.target = "_blank";
-        thread.rel = "noopener noreferrer";
         thread.textContent = row.university;
-        thread.title = "Open the email thread in Gmail";
+        thread.title = "Read the email thread";
+        thread.addEventListener("click", () => openThread(row));
         cells[1].appendChild(thread);
       } else {
         cells[1].textContent = row.university;
@@ -543,6 +536,77 @@ async function createDrafts() {
     followupDrafts.disabled = false;
   }
 }
+
+const threadDialog = document.querySelector("#thread");
+const threadTitle = document.querySelector("#thread-title");
+const threadMeta = document.querySelector("#thread-meta");
+const threadStatus = document.querySelector("#thread-status");
+const threadMessages = document.querySelector("#thread-messages");
+let threadRequest = 0;
+
+function messageWhen(value) {
+  const date = new Date(Number(value) || value);
+  if (Number.isNaN(date.getTime())) return "";
+  return date.toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" });
+}
+
+function renderThread(messages) {
+  threadMessages.replaceChildren();
+  if (!messages.length) {
+    threadStatus.textContent = "No emails with this address were found in the mailbox.";
+    return;
+  }
+  threadStatus.textContent = "";
+  let subject = "";
+  for (const message of messages) {
+    const article = document.createElement("article");
+    article.className = `thread-message ${message.fromUs ? "us" : "them"}`;
+    const header = document.createElement("header");
+    const who = document.createElement("span");
+    who.className = "who";
+    who.textContent = message.fromUs ? "Us" : message.from || "Them";
+    const when = document.createElement("time");
+    when.textContent = messageWhen(message.at);
+    header.append(who, when);
+    article.appendChild(header);
+    if (message.subject && message.subject !== subject) {
+      const title = document.createElement("p");
+      title.className = "subject";
+      title.textContent = message.subject;
+      article.appendChild(title);
+      subject = message.subject;
+    }
+    const body = document.createElement("p");
+    body.className = "body";
+    body.textContent = message.body || "";
+    article.appendChild(body);
+    threadMessages.appendChild(article);
+  }
+}
+
+async function openThread(row) {
+  const request = ++threadRequest;
+  threadTitle.textContent = row.university || row.email;
+  threadMeta.textContent = row.email;
+  threadStatus.textContent = "Loading the thread…";
+  threadMessages.replaceChildren();
+  if (!threadDialog.open) threadDialog.showModal();
+  try {
+    const response = await fetch(`/api/gmail/thread?email=${encodeURIComponent(row.email)}`);
+    const body = await response.json();
+    if (request !== threadRequest) return;
+    if (!response.ok) throw new Error(body.error || "Could not load the thread.");
+    renderThread(body.messages || []);
+  } catch (error) {
+    if (request !== threadRequest) return;
+    threadStatus.textContent = error.message;
+  }
+}
+
+document.querySelector("#thread-close").addEventListener("click", () => threadDialog.close());
+threadDialog.addEventListener("click", (event) => {
+  if (event.target === threadDialog) threadDialog.close();
+});
 
 document.querySelector(".tabs").addEventListener("click", (event) => {
   const button = event.target.closest("[data-view]");
