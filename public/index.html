@@ -50,12 +50,17 @@
       <button type="button" class="phase phase-contacted-none" data-phase="contacted-none">
         <strong id="phase-contacted-none">0</strong>
         <span>Contacted, no reply</span>
-        <small>We sent 1 email. They never wrote back.</small>
+        <small>We sent 1 email in the last 2 weeks. They never wrote back.</small>
       </button>
       <button type="button" class="phase phase-followed-none" data-phase="followed-none">
         <strong id="phase-followed-none">0</strong>
         <span>Followed up, no reply</span>
-        <small>We sent 2 or more. They still have not replied.</small>
+        <small>We sent 2 or more in the last 2 weeks. They still have not replied.</small>
+      </button>
+      <button type="button" class="phase phase-quiet" data-phase="quiet">
+        <strong id="phase-quiet">0</strong>
+        <span>No reply for 2 weeks</span>
+        <small>We emailed them. No response for more than 14 days.</small>
       </button>
       <button type="button" class="phase phase-contacted-replied" data-phase="contacted-replied">
         <strong id="phase-contacted-replied">0</strong>
@@ -70,7 +75,7 @@
       <button type="button" class="phase phase-conversation-waiting" data-phase="conversation-waiting">
         <strong id="phase-conversation-waiting">0</strong>
         <span>In conversation, no reply</span>
-        <small>They replied before. We wrote again and are waiting.</small>
+        <small>They replied before. We wrote again in the last 2 weeks and are waiting.</small>
       </button>
       <button type="button" class="phase phase-auto" data-phase="auto">
         <strong id="phase-auto">0</strong>
@@ -125,6 +130,7 @@
         <legend>Send to</legend>
         <label><input id="aud-contacted" type="checkbox" checked /> Contacted, no reply</label>
         <label><input id="aud-followed" type="checkbox" checked /> Followed up, no reply</label>
+        <label><input id="aud-quiet" type="checkbox" checked /> No reply for 2 weeks</label>
       </fieldset>
       <label for="followup-subject">Subject</label>
       <input id="followup-subject" type="text" />

@@ -11,6 +11,7 @@ const tbody = document.querySelector("#rows");
 const countrySelect = document.querySelector("#country");
 const searchInput = document.querySelector("#search");
 
+const QUIET_TAB = "No reply for 2 weeks";
 let result = null;
 let gmailStatus = null;
 let activeCountry = "all";
@@ -29,9 +30,16 @@ function fillCountries() {
   all.value = "all";
   all.textContent = `All tabs (${result.counts.tabs})`;
   countrySelect.appendChild(all);
+  const quietCount = result.rows.filter((row) => row.phase === "quiet").length;
+  if (quietCount) {
+    const quiet = document.createElement("option");
+    quiet.value = QUIET_TAB;
+    quiet.textContent = `${QUIET_TAB} (${quietCount})`;
+    countrySelect.appendChild(quiet);
+  }
   for (const country of result.countries) {
     const option = document.createElement("option");
-    const count = result.rows.filter((row) => row.country === country).length;
+    const count = result.rows.filter((row) => row.country === country && row.phase !== "quiet").length;
     option.value = country;
     option.textContent = `${country} (${count})`;
     countrySelect.appendChild(option);
@@ -79,7 +87,13 @@ function rowLinks(row) {
 function visibleRows() {
   const query = searchText.trim().toLowerCase();
   return result.rows.filter((row) => {
-    const countryOk = activeCountry === "all" || row.country === activeCountry;
+    const groupedAway = row.phase === "quiet";
+    const countryOk =
+      activeCountry === QUIET_TAB
+        ? groupedAway
+        : activeCountry === "all"
+          ? !groupedAway || activePhase === "quiet"
+          : row.country === activeCountry && !groupedAway;
     const phaseOk = activePhase === "all" || row.phase === activePhase;
     const searchOk = !query || `${row.university} ${row.email} ${row.replyFrom}`.toLowerCase().includes(query);
     return countryOk && phaseOk && searchOk;
@@ -93,6 +107,7 @@ function render() {
   document.querySelector("#phase-not-contacted").textContent = String(counts.notContacted);
   document.querySelector("#phase-contacted-none").textContent = String(counts.contactedNone);
   document.querySelector("#phase-followed-none").textContent = String(counts.followedNone);
+  document.querySelector("#phase-quiet").textContent = String(counts.quiet || 0);
   document.querySelector("#phase-contacted-replied").textContent = String(counts.contactedReplied);
   document.querySelector("#phase-conversation").textContent = String(counts.conversation);
   document.querySelector("#phase-conversation-waiting").textContent = String(counts.conversationWaiting);
@@ -414,6 +429,7 @@ const sendConfirmText = document.querySelector("#send-confirm-text");
 const previewLabel = document.querySelector("#preview-label");
 const audienceContacted = document.querySelector("#aud-contacted");
 const audienceFollowed = document.querySelector("#aud-followed");
+const audienceQuiet = document.querySelector("#aud-quiet");
 let previewIndex = 0;
 
 const FOLLOWUP_SUBJECT = "Re: Internship placements in Amsterdam with Eco Boats Amsterdam and Canal Motorboats";
@@ -449,6 +465,7 @@ function noReplyRows() {
     if (answeredDomains.has(domainOf(row.email))) return false;
     if (row.phase === "contacted-none") return audienceContacted.checked;
     if (row.phase === "followed-none") return audienceFollowed.checked;
+    if (row.phase === "quiet" && row.replied === 0 && row.status !== "auto") return audienceQuiet.checked;
     return false;
   });
 }
@@ -465,8 +482,9 @@ function renderFollowup() {
   if (previewIndex >= rows.length) previewIndex = 0;
   const contacted = rows.filter((row) => row.phase === "contacted-none").length;
   const followed = rows.filter((row) => row.phase === "followed-none").length;
+  const quiet = rows.filter((row) => row.phase === "quiet").length;
   followupCount.textContent = rows.length
-    ? `${rows.length} separate emails. ${contacted} were contacted with no reply, and ${followed} were followed up with no reply. {university} is filled in for each one.`
+    ? `${rows.length} separate emails. ${contacted} were contacted with no reply, ${followed} were followed up with no reply, and ${quiet} have had no reply for 2 weeks. {university} is filled in for each one.`
     : "No addresses selected.";
   const sample = rows[previewIndex];
   previewLabel.textContent = sample ? `${previewIndex + 1} of ${rows.length} · ${sample.university}` : "No recipient";
@@ -640,6 +658,7 @@ followupSubject.addEventListener("input", () => result && renderFollowup());
 followupBody.addEventListener("input", () => result && renderFollowup());
 audienceContacted.addEventListener("change", () => result && renderFollowup());
 audienceFollowed.addEventListener("change", () => result && renderFollowup());
+audienceQuiet.addEventListener("change", () => result && renderFollowup());
 document.querySelector("#insert-university").addEventListener("click", insertUniversity);
 document.querySelector("#preview-prev").addEventListener("click", () => {
   const rows = noReplyRows();

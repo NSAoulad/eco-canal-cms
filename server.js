@@ -194,9 +194,10 @@ function buildWorkbook(result) {
     { Metric: "Contacted, replied", Value: result.counts.contactedReplied },
     { Metric: "In conversation", Value: result.counts.conversation },
     { Metric: "In conversation, no reply", Value: result.counts.conversationWaiting },
+    { Metric: "No reply for 2 weeks", Value: result.counts.quiet },
   ];
   for (const country of result.countries || []) {
-    const rows = result.rows.filter((row) => row.country === country);
+    const rows = result.rows.filter((row) => row.country === country && row.phase !== "quiet");
     summaryRows.push({
       Metric: country,
       Value: `${rows.filter((row) => row.gereageerd === "TRUE").length} gereageerd / ${rows.length}`,
@@ -207,9 +208,16 @@ function buildWorkbook(result) {
   XLSX.utils.book_append_sheet(book, summary, "Summary");
 
   for (const country of result.countries || []) {
-    const sheet = XLSX.utils.json_to_sheet(workbookRows(result.rows.filter((row) => row.country === country)));
+    const rows = result.rows.filter((row) => row.country === country && row.phase !== "quiet");
+    const sheet = XLSX.utils.json_to_sheet(workbookRows(rows));
     sheet["!cols"] = COLUMN_WIDTHS;
     XLSX.utils.book_append_sheet(book, sheet, String(country).slice(0, 31));
+  }
+  const quietRows = (result.rows || []).filter((row) => row.phase === "quiet");
+  if (quietRows.length) {
+    const quiet = XLSX.utils.json_to_sheet(workbookRows(quietRows));
+    quiet["!cols"] = COLUMN_WIDTHS;
+    XLSX.utils.book_append_sheet(book, quiet, "No reply 2 weeks");
   }
   return XLSX.write(book, { type: "buffer", bookType: "xlsx" });
 }
