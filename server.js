@@ -9,7 +9,7 @@ const {
   authUrl,
   consumeAuthState,
   createAuthState,
-  createDrafts,
+  sendMessages,
   exchangeCode,
   finishMailbox,
   gmailStatus,
@@ -303,7 +303,7 @@ const server = http.createServer(async (req, res) => {
       res.end();
       return;
     }
-    if (req.method === "POST" && url.pathname === "/api/drafts") {
+    if (req.method === "POST" && url.pathname === "/api/send") {
       const callback = gmailCallbackUrl(req);
       const status = gmailStatus(callback, cookieValue(req, "gmail_refresh"));
       if (!status.configured) {
@@ -311,13 +311,13 @@ const server = http.createServer(async (req, res) => {
         return;
       }
       if (!status.connected) {
-        sendJson(res, 400, { error: "Connect Gmail before creating drafts.", reconnect: true });
+        sendJson(res, 400, { error: "Connect Gmail before sending.", reconnect: true });
         return;
       }
       const body = JSON.parse((await readBody(req)) || "{}");
       const messages = (Array.isArray(body.messages) ? body.messages : [])
         .filter((message) => message && typeof message.to === "string" && message.to.includes("@"))
-        .slice(0, 10)
+        .slice(0, 5)
         .map((message) => ({
           to: String(message.to).trim(),
           subject: String(message.subject || ""),
@@ -328,10 +328,14 @@ const server = http.createServer(async (req, res) => {
         return;
       }
       try {
-        const created = await createDrafts(cookieValue(req, "gmail_refresh"), messages);
-        sendJson(res, 200, created);
+        const sent = await sendMessages(cookieValue(req, "gmail_refresh"), messages);
+        sendJson(res, 200, sent);
       } catch (error) {
-        sendJson(res, error.reconnect ? 403 : 500, { error: error.message, reconnect: Boolean(error.reconnect) });
+        sendJson(res, error.reconnect ? 403 : 500, {
+          error: error.message,
+          reconnect: Boolean(error.reconnect),
+          sent: error.sent || 0,
+        });
       }
       return;
     }

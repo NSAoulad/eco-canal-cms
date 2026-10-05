@@ -494,7 +494,7 @@ function askForDrafts() {
   }
   const sample = rows[previewIndex] || rows[0];
   sendConfirm.hidden = false;
-  sendConfirmText.textContent = `Create ${rows.length} drafts in marketing@ecoboatsamsterdam.com. The first one starts “Dear ${sample.university}”. Nothing is sent until you send them from Gmail.`;
+  sendConfirmText.textContent = `Send ${rows.length} emails from marketing@ecoboatsamsterdam.com. The first one starts “Dear ${sample.university}”. They are sent immediately.`;
 }
 
 async function createDrafts() {
@@ -505,39 +505,47 @@ async function createDrafts() {
     window.location.href = "/api/gmail/auth";
     return;
   }
-  followupStatus.textContent = `Creating ${rows.length} Gmail drafts…`;
+  followupStatus.textContent = `Sending ${rows.length} emails…`;
+  let sent = 0;
   try {
     const messages = rows.map((row) => ({
       to: row.email,
       subject: fillTemplate(followupSubject.value, row.university),
       body: fillTemplate(followupBody.value, row.university),
     }));
-    let created = 0;
-    for (let index = 0; index < messages.length; ) {
-      const response = await fetch("/api/drafts", {
+    let index = 0;
+    for (; index < messages.length; ) {
+      const response = await fetch("/api/send", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ messages: messages.slice(index, index + 10) }),
+        body: JSON.stringify({ messages: messages.slice(index, index + 5) }),
       });
       const body = await response.json();
       if (body.reconnect) {
+        sent += body.sent || 0;
         window.location.href = "/api/gmail/auth";
         return;
       }
-      if (!response.ok) throw new Error(body.error || "Could not create the Gmail drafts.");
-      created += body.created || 0;
-      index += body.created || 0;
+      if (!response.ok) {
+        sent += body.sent || 0;
+        throw new Error(body.error || "Could not send the emails.");
+      }
+      sent += body.sent || 0;
+      index += body.sent || 0;
       if (body.retryAfter) {
         followupStatus.textContent = `Gmail limit reached. Waiting ${body.retryAfter}s…`;
         await new Promise((resolve) => setTimeout(resolve, body.retryAfter * 1000));
         continue;
       }
-      followupStatus.textContent = `Creating Gmail drafts… ${created} of ${messages.length}`;
-      if (!body.created) throw new Error("Gmail did not create a draft.");
+      followupStatus.textContent = `Sending emails… ${sent} of ${messages.length}`;
+      if (!body.sent) throw new Error("Gmail did not send an email.");
+      if (index < messages.length) await new Promise((resolve) => setTimeout(resolve, 8000));
     }
-    followupStatus.textContent = `Created ${created} drafts in marketing@ecoboatsamsterdam.com. Open Gmail drafts to send them.`;
+    followupStatus.textContent = `Sent ${sent} emails from marketing@ecoboatsamsterdam.com.`;
   } catch (error) {
-    followupStatus.textContent = error.message;
+    followupStatus.textContent = sent
+      ? `${error.message} ${sent} of ${rows.length} were already sent.`
+      : error.message;
   } finally {
     followupDrafts.disabled = false;
   }
